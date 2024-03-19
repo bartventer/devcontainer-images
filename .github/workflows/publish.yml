@@ -4,9 +4,6 @@ on:
   workflow_dispatch:
     inputs:
       imageName:
-        type: choice
-        options:
-          - 'archlinux'
         description: 'The name of the image to build and push'
         required: true
 
@@ -16,10 +13,6 @@ jobs:
     permissions:
       contents: write
       packages: write
-
-    strategy:
-      matrix:
-        imageName: ${{ github.event.inputs.imageName }}
 
     steps:
     - name: Checkout Repository
@@ -40,6 +33,6 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: src/${{ matrix.imageName }}/.devcontainer
+        context: src/${{ github.event.inputs.imageName }}/.devcontainer
         push: true
-        tags: ${{ github.repository_owner }}/${{ matrix.imageName }}:latest
+        tags: ${{ github.repository_owner }}/${{ github.event.inputs.imageName }}:latest
