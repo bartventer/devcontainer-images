@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       imageName:
+        type: choice
+        options:
+          - 'archlinux'
         description: 'The name of the image to build and push'
         required: true
 
@@ -16,7 +19,7 @@ jobs:
 
     strategy:
       matrix:
-        imageName: ${{fromJson(github.event.inputs.imageName)}}
+        imageName: ${{ github.event.inputs.imageName }}
 
     steps:
     - name: Checkout Repository
