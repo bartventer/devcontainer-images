@@ -41,4 +41,4 @@ Beyond `git`, this image / `Dockerfile` includes `zsh`, [Oh My Zsh!](https://ohm
 
 Copyright (c) Bart Venter. All rights reserved.
 
-Licensed under the MIT License. See [LICENSE](LICENSE) for more information.
+Licensed under the MIT License. See [LICENSE](../../LICENSE) for more information.
