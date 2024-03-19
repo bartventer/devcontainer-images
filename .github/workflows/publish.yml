@@ -44,9 +44,14 @@ jobs:
       shell: bash
       run: |
         echo "🔍 Getting the latest version of the image from GitHub Container Registry..."
-        LATEST_VERSION=$(curl -s https://ghcr.io/v2/${{ github.repository_owner }}/${{ github.event.inputs.imageName }}/tags/list | jq -r '.tags[]' | sort -V | tail -n 1 || echo "0.0.0")
+        JSON_RESPONSE=$(curl -s https://ghcr.io/v2/${{ github.repository_owner }}/${{ github.event.inputs.imageName }}/tags/list)
+        if jq -e . >/dev/null 2>&1 <<<"$JSON_RESPONSE"; then
+          LATEST_VERSION=$(echo $JSON_RESPONSE | jq -r '.tags[]' | sort -V | tail -n 1)
+        else
+          LATEST_VERSION="0.0.0"
+        fi
         echo "✅ Latest version: $LATEST_VERSION"
-        echo "::set-output name=version::${LATEST_VERSION}"
+        echo "version=${LATEST_VERSION}" >> $GITHUB_OUTPUT
             
     - name: Compare versions
       id: compare-versions
@@ -57,12 +62,12 @@ jobs:
         LATEST_VERSION=${{ steps.latest-version.outputs.version }}
         echo "🆕 New version: $VERSION"
         echo "🔵 Latest version: $LATEST_VERSION"
-        if [[ $(printf '%s\n' "$VERSION" "$LATEST_VERSION" | sort -V | head -n 1) = "$LATEST_VERSION" ]]; then
-          echo "::set-output name=valid::false"
+        if [[ $(printf '%s\n' "$VERSION" "$LATEST_VERSION" | sort -V | head -n 1) = "$VERSION" ]]; then
+          echo "valid=false" >> $GITHUB_OUTPUT
           echo "❌ Error: The new version ($VERSION) is not larger than the current version ($LATEST_VERSION)."
         else
-          echo "::set-output name=valid::true"
-          echo "::set-output name=version::${VERSION}"
+          echo "valid=true" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "✅ The new version ($VERSION) is larger than the current version ($LATEST_VERSION). Proceeding with the build..."
         fi
       
@@ -82,6 +87,7 @@ jobs:
       
     - name: Push Docker image for x86-64 on ${{ github.event.inputs.imageName }}
       shell: bash
+      if: steps.compare-versions.outputs.valid == 'true'
       run: |
         echo "🚀 Pushing Docker image for x86-64 on ${{ github.event.inputs.imageName }}..."
         # Push the image for the new version and the latest version
