@@ -8,7 +8,7 @@
 |----------|-------|
 | *Categories* | Core, Other |
 | *Image type* | Dockerfile |
-| *Published images* | docker.io/bartventer/devcontainer-images/archlinux |
+| *Published images* | ghcr:io/bartventer/devcontainer-images/archlinux |
 | *Available image variants* | latest |
 | *Published image architecture(s)* | x86-64 |
 | *Container host OS support* | Linux, macOS, Windows |
@@ -21,15 +21,15 @@ See **[history](history)** for information on the contents of published images.
 
 You can directly reference pre-built versions of `Dockerfile` by using the `image` property in `.devcontainer/devcontainer.json` or updating the `FROM` statement in your own `Dockerfile` to one of the following. An example `Dockerfile` is included in this repository.
 
-- `docker.io/bartventer/archlinux` (latest)
+- `ghcr:io/bartventer/archlinux` (latest)
 
 Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
 You can decide how often you want updates by referencing a [semantic version](https://semver.org/) of each image. For example:
 
-- `docker.io/bartventer/archlinux:1`
-- `docker.io/bartventer/archlinux:1.0`
-- `docker.io/bartventer/archlinux:1.0.0`
+- `ghcr:io/bartventer/archlinux:1`
+- `ghcr:io/bartventer/archlinux:1.0`
+- `ghcr:io/bartventer/archlinux:1.0.0`
 
 See [history](history) for information on the contents of each version and [here for a complete list of available tags](https://github.com/bartventer?tab=packages&repo_name=devcontainer-images).
 
