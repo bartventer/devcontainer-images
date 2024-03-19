@@ -66,6 +66,8 @@ jobs:
     - name: Build Docker image for x86-64 on ${{ github.event.inputs.imageName }}
       if: steps.compare-versions.outputs.valid == 'true'
       shell: bash
+      env:
+        DOCKER_BUILDKIT: 1
       run: |
         echo "🏗️ Building Docker image for x86-64 on ${{ github.event.inputs.imageName }}..."
         cd src/${{ github.event.inputs.imageName }}/.devcontainer
