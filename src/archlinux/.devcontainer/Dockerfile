@@ -2,6 +2,11 @@
 ARG VARIANT="latest"
 FROM archlinux:${VARIANT}
 
+# Labels
+LABEL org.opencontainers.image.source=https://github.com/bartventer/devcontainer-images
+LABEL org.opencontainers.image.description="Simple Arch Linux container with Git and common utilities installed."
+LABEL org.opencontainers.image.licenses=MIT
+
 # Adjust directory permissions
 RUN chmod 555 /srv/ftp && \
     chmod 755 /usr/share/polkit-1/rules.d/
