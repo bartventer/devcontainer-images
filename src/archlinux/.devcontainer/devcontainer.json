@@ -1,0 +1,20 @@
+{
+    "build": {
+        "dockerfile": "./Dockerfile",
+        "context": ".",
+        "args": {
+            "VARIANT": "latest"
+        }
+    },
+    "features": {
+        "ghcr.io/bartventer/devcontainer-features/common-utils:1": {
+            "installZsh": "true",
+            "username": "vscode",
+            "userUid": "1000",
+            "userGid": "1000",
+            "upgradePackages": "true",
+            "additionalPackages": "git"
+        }
+    },
+    "remoteUser": "vscode"
+}
