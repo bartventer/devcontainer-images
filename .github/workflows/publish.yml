@@ -22,8 +22,6 @@ jobs:
         image-name: ['archlinux']
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Install Dependencies
         run: yarn global add ajv-cli ajv-formats
       - name: Validate Metadata
@@ -47,6 +45,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     - name: Determine Increment Type
       id: increment
       shell: bash
