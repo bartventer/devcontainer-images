@@ -19,9 +19,9 @@ Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
 You can decide how often you want updates by referencing a [semantic version](https://semver.org/) of each image. For example:
 
-- `ghcr.io/bartventer/{{imageName}}:{{majorVersion}}`
-- `ghcr.io/bartventer/{{imageName}}:{{majorVersion}}.{{minorVersion}}`
-- `ghcr.io/bartventer/{{imageName}}:{{majorVersion}}.{{minorVersion}}.{{patchVersion}}`
+- `ghcr.io/bartventer/devcontainer-images/{{imageName}}:{{majorVersion}}`
+- `ghcr.io/bartventer/devcontainer-images/{{imageName}}:{{majorVersion}}.{{minorVersion}}`
+- `ghcr.io/bartventer/devcontainer-images/{{imageName}}:{{majorVersion}}.{{minorVersion}}.{{patchVersion}}`
 
 ## License
 Copyright (c) Bart Venter.
