@@ -29,6 +29,9 @@ jobs:
       pull-requests: write
     env:
       VERSION: ""
+      VERSION_MAJOR:  ""
+      VERSION_MINOR:  ""
+      VERSION_PATCH:  ""
 
     steps:
     - name: Checkout Repository
@@ -56,12 +59,28 @@ jobs:
         echo "(*) Getting version from VERSION file"
         CURRENT=$(cat ./src/${{ github.event.inputs.image-name }}/VERSION)
         VERSION=$(semver -i ${{ github.event.inputs.increment }} $CURRENT)
+        VERSION_MAJOR=$(echo $VERSION | cut -d. -f1)
+        VERSION_MINOR=$(echo $VERSION | cut -d. -f2)
+        VERSION_PATCH=$(echo $VERSION | cut -d. -f3)
         echo "VERSION=$VERSION" >> "$GITHUB_ENV"
-        echo "Updating VERSION file with new version ($VERSION)..."
-        echo "VERSION=$VERSION" > ./src/${{ github.event.inputs.image-name }}/VERSION
+        echo "VERSION_MAJOR=$VERSION_MAJOR" >> "$GITHUB_ENV"
+        echo "VERSION_MINOR=$VERSION_MINOR" >> "$GITHUB_ENV"
+        echo "VERSION_PATCH=$VERSION_PATCH" >> "$GITHUB_ENV"
         echo "OK."
+        echo
+        echo "Updating VERSION file with new version ($VERSION)..."
+        echo "$VERSION" > ./src/${{ github.event.inputs.image-name }}/VERSION
+        echo "OK."
+
+    - name: Create README for '${{ github.event.inputs.image-name }}'
+      shell: bash
+      run: |
+        ./scripts/generate-readme.sh ${{ github.event.inputs.image-name }} \
+          ${{env.VERSION_MAJOR}} \
+          ${{env.VERSION_MINOR}} \
+          ${{env.VERSION_PATCH}}
         
-    - name: Build Docker image for '${{ github.event.inputs.image-name }}'
+    - name: Build and Push Docker image for '${{ github.event.inputs.image-name }}'
       shell: bash
       working-directory: ./src/${{ github.event.inputs.image-name }}
       run: |
@@ -69,23 +88,17 @@ jobs:
         devcontainer build \
           --log-level debug \
           --workspaceFolder . \
-          --image-name ghcr.io/${{ github.repository_owner }}/${{ github.event.inputs.image-name }}:${{env.VERSION}}
+          --platform linux/amd64,linux/arm64 \
+          --image-name ghcr.io/${{ github.repository }}/${{ github.event.inputs.image-name }}:latest \
+          --image-name ghcr.io/${{ github.repository }}/${{ github.event.inputs.image-name }}:${{env.VERSION_MAJOR}} \
+          --image-name ghcr.io/${{ github.repository }}/${{ github.event.inputs.image-name }}:${{env.VERSION_MAJOR}}.${{env.VERSION_MINOR}} \
+          --image-name ghcr.io/${{ github.repository }}/${{ github.event.inputs.image-name }}:${{env.VERSION_MAJOR}}.${{env.VERSION_MINOR}}.${{env.VERSION_PATCH}} \
+          --push
         echo "OK."
 
-    - name: Push Docker image for '${{ github.event.inputs.image-name }}'
-      run: |
-        echo "(*) Pushing Docker image for '${{ github.event.inputs.image-name }}'"
-        docker push ghcr.io/${{ github.repository_owner }}/${{ github.event.inputs.image-name }}:${{env.VERSION}}
-
-    - name: Create README for '${{ github.event.inputs.image-name }}'
-      run: |
-        VERSION_MAJOR=$(echo ${{env.VERSION}} | cut -d. -f1)
-        VERSION_MINOR=$(echo ${{env.VERSION}} | cut -d. -f2)
-        VERSION_PATCH=$(echo ${{env.VERSION}} | cut -d. -f3)
-        ./scripts/generate-readme.sh ${{ github.event.inputs.image-name }} $VERSION_MAJOR $VERSION_MINOR $VERSION_PATCH
-
     - name: Create PR for Documentation
-      id: push_image_info
+      id: create-pr
+      shell: bash
       working-directory: ./src/${{ github.event.inputs.image-name }}
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -98,7 +111,7 @@ jobs:
           branch=automated-documentation-update-$GITHUB_RUN_ID
           git checkout -b $branch
           git add ./README.md ./VERSION
-          git commit -m "chore(docs/${{ github.event.inputs.image-name }}): Automated documentation update"
+          git commit -m "chore(docs/${{ github.event.inputs.image-name }}): Automated documentation update [skip ci]"
           git push origin $branch
           gh pr create \
               --title "chore(docs/${{ github.event.inputs.image-name }}): Automated documentation update" \
@@ -114,9 +127,9 @@ jobs:
         files: |
           src/${{ github.event.inputs.image-name }}/README.md
         token: ${{ secrets.GITHUB_TOKEN }}
-        tag_name: "${{ github.event.inputs.image-name }}_v${{ steps.bump-version.outputs.VERSION }}"
+        tag_name: "${{ github.event.inputs.image-name }}_v${{ env.VERSION }}"
         target_commitish: ${{ github.sha }}
-        name: "${{ github.event.inputs.image-name }} v${{ steps.bump-version.outputs.VERSION }}"
+        name: "${{ github.event.inputs.image-name }} v${{ env.VERSION }}"
         body_path: src/${{ github.event.inputs.image-name }}/README.md
         make_latest: true
         draft: false
