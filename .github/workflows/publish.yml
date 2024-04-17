@@ -85,10 +85,11 @@ jobs:
       working-directory: ./src/${{ github.event.inputs.image-name }}
       run: |
         echo "(*) Building Docker image for '${{ github.event.inputs.image-name }} v${{env.VERSION}}'"
+        # Only supports amd64(x86_64): see https://hub.docker.com/_/archlinux
         devcontainer build \
           --log-level debug \
           --workspaceFolder . \
-          --platform linux/amd64,linux/arm64 \
+          --platform linux/amd64 \
           --image-name ghcr.io/${{ github.repository }}/${{ github.event.inputs.image-name }}:latest \
           --image-name ghcr.io/${{ github.repository }}/${{ github.event.inputs.image-name }}:${{env.VERSION_MAJOR}} \
           --image-name ghcr.io/${{ github.repository }}/${{ github.event.inputs.image-name }}:${{env.VERSION_MAJOR}}.${{env.VERSION_MINOR}} \
