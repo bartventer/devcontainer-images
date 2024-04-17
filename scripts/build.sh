@@ -99,9 +99,8 @@ else
     echo "(*) No published version found in the registry"
 fi
 
-set -x
 echo "(*) Running image build, tag and push for ${IMAGE_NAME} version ${VERSION}"
-BUILD_OUTPUT="build-output.json"
+BUILD_OUTPUT="${CONFIG_PATH}/build-output.json"
 if [ "${DRYRUN}" = "false" ]; then
     devcontainer build \
         --log-level debug \
@@ -117,4 +116,6 @@ else
     echo "(*) Dry run enabled. Skipping the build and push."
 fi
 
-echo "✔️ OK. Image built, tagged and pushed to the registry. Build output: ${BUILD_OUTPUT}"
+echo "✔️ OK. Image built, tagged and pushed to the registry."
+echo "Build output (${BUILD_OUTPUT}):"
+jq . "${BUILD_OUTPUT}"
