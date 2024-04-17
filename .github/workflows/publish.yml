@@ -5,8 +5,10 @@ on:
   push:
     branches:
       - master
-    paths: 
+    paths:
       - 'src/**'
+      # To prevent the workflow from triggering itself
+      - '!src/*/README.md'
 
 jobs:
   validate-metadata:
@@ -48,9 +50,16 @@ jobs:
       shell: bash
       run: |
         chmod +x ./scripts/determine-increment.sh
-        export INCREMENT=$(./scripts/determine-increment.sh \
+        # Get the previous tag for the matrix image
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 ${matrix.image-name}_v* 2>/dev/null || echo "")
+        if [ -n "$PREVIOUS_TAG" ]; then
+          PREVIOUS_SHA=$(git rev-list -n 1 $PREVIOUS_TAG)
+        else
+          PREVIOUS_SHA=${{ github.event.before }}
+        fi
+        INCREMENT=$(./scripts/determine-increment.sh \
           ./src/${{ matrix.image-name }} \
-          ${{ github.event.before }} \
+          $PREVIOUS_SHA \
           ${{ github.sha }}
         )
         echo "INCREMENT=$INCREMENT" >> $GITHUB_OUTPUT
