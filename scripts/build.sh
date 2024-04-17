@@ -114,13 +114,13 @@ fi
 BUILD_OUTPUT="build-output.json"
 devcontainer build \
     --log-level debug \
-    --workspaceFolder "src/$(basename "${CONFIG_PATH}")" \
+    --workspace-folder "src/$(basename "${CONFIG_PATH}")" \
     --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:latest" \
     --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION}" \
     --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION_MAJOR}" \
     --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION_MAJOR}.${VERSION_MINOR}" \
     --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" \
     "${PLATFORM_FLAG}" \
-    ${OUTPUT_FLAG} >"${BUILD_OUTPUT}"
+    "${OUTPUT_FLAG}" >"${BUILD_OUTPUT}"
 
 echo "✔️ OK. Image built, tagged and pushed to the registry. Build output: ${BUILD_OUTPUT}"
