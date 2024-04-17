@@ -1,0 +1,192 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "Image Metadata",
+    "description": "Metadata for a container image.",
+    "additionalProperties": false,
+    "properties": {
+        "version": {
+            "type": "string",
+            "description": "Semantic version of the image (https://semver.org/).",
+            "minLength": 5,
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "name": {
+            "type": "string",
+            "description": "Name of the image.",
+            "minLength": 1
+        },
+        "summary": {
+            "type": "string",
+            "description": "A brief description of the image.",
+            "minLength": 1
+        },
+        "contributors": {
+            "type": "array",
+            "description": "List of contributors to the image.",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the contributor.",
+                        "minLength": 1
+                    },
+                    "link": {
+                        "type": "string",
+                        "description": "Link to the contributor's profile.",
+                        "format": "uri",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "name",
+                    "link"
+                ]
+            }
+        },
+        "definitionType": {
+            "type": "string",
+            "description": "Type of the definition file used to build the image.",
+            "default": "Dockerfile",
+            "enum": [
+                "Dockerfile",
+                "Buildpacks",
+                "Kaniko",
+                "Jib",
+                "Bazel",
+                "Cloud Native Buildpacks",
+                "img",
+                "Buildah",
+                "Podman",
+                "Distroless",
+                "Kubernetes",
+                "Kustomize",
+                "Helm"
+            ]
+        },
+        "containerHostOSSupport": {
+            "type": "array",
+            "description": "List of host operating systems that support the container.",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "Linux",
+                    "macOS",
+                    "Windows",
+                    "FreeBSD",
+                    "NetBSD",
+                    "OpenBSD"
+                ]
+            }
+        },
+        "containerOS": {
+            "type": "object",
+            "description": "Operating system of the container.",
+            "additionalProperties": false,
+            "properties": {
+                "os": {
+                    "type": "string",
+                    "description": "Operating system family.",
+                    "enum": [
+                        "Linux",
+                        "Windows",
+                        "macOS",
+                        "FreeBSD",
+                        "NetBSD",
+                        "OpenBSD"
+                    ]
+                },
+                "distribution": {
+                    "type": "string",
+                    "description": "Specific distribution of the operating system."
+                }
+            },
+            "required": [
+                "os"
+            ],
+            "if": {
+                "properties": {
+                    "os": {
+                        "const": "Linux"
+                    }
+                }
+            },
+            "then": {
+                "properties": {
+                    "distribution": {
+                        "enum": [
+                            "Alpine",
+                            "Arch",
+                            "CentOS",
+                            "Debian",
+                            "Fedora",
+                            "Gentoo",
+                            "openSUSE",
+                            "RHEL",
+                            "SLES",
+                            "Ubuntu"
+                        ]
+                    }
+                }
+            }
+        },
+        "platforms": {
+            "type": "array",
+            "description": "List of platforms that the image supports.",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "linux/amd64",
+                    "linux/amd64/v2",
+                    "linux/amd64/v3",
+                    "linux/arm64",
+                    "linux/riscv64",
+                    "linux/ppc64le",
+                    "linux/s390x",
+                    "linux/386",
+                    "linux/mips64le",
+                    "linux/mips64",
+                    "linux/arm/v7",
+                    "linux/arm/v6"
+                ]
+            }
+        },
+        "languages": {
+            "type": "array",
+            "description": "List of programming languages supported by the image.",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "C",
+                    "C++",
+                    "C#",
+                    "Go",
+                    "Java",
+                    "Python",
+                    "Ruby",
+                    "Rust",
+                    "Swift",
+                    "Node.js"
+                ]
+            }
+        }
+    },
+    "required": [
+        "summary",
+        "contributors",
+        "definitionType",
+        "containerHostOSSupport",
+        "containerOS",
+        "platforms"
+    ]
+}
