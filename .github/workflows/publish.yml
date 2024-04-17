@@ -69,7 +69,7 @@ jobs:
         echo "INCREMENT=$INCREMENT" >> $GITHUB_OUTPUT
       
     - name: Install Dependencies
-      run: yarn global add @devcontainers/cli semver jq
+      run: yarn global add @devcontainers/cli semver
   
     - name: Bump Version
       id: bump-version
