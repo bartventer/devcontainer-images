@@ -12,8 +12,8 @@
             "installOhMyZshConfig": false,
             "additionalPackages": "go nodejs npm yarn make jq yq"
         },
-        "ghcr.io/bartventer/arch-devcontainer-features/docker-in-docker:latest": {},
         "ghcr.io/bartventer/arch-devcontainer-features/aws-cli:latest": {},
+        "ghcr.io/bartventer/arch-devcontainer-features/docker-in-docker:latest": {},
         "ghcr.io/bartventer/arch-devcontainer-features/terraform:latest": {}
     },
     "remoteUser": "vscode"
