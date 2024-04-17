@@ -15,6 +15,21 @@ DEVCONTAINER_EXEC=$(DEVCONTAINER) exec
 DEVCONTAINER_UP_FLAGS=--workspace-folder ./src/$(IMAGE_NAME)
 DEVCONTAINER_EXEC_FLAGS=--workspace-folder ./src/$(IMAGE_NAME)
 
+# Config variables
+CONFIG_SCHEMA=doc/schema.json
+IMAGE_METADATA_PATH?=./src/$(IMAGE_NAME)/metadata.json
+
+# Config Validation Command
+AJV=npx ajv
+AJV_VALIDATE=$(AJV) validate
+
+# Config Validation Flags
+AJV_VALIDATE_FLAGS=\
+	-s $(CONFIG_SCHEMA) \
+	-d $(IMAGE_METADATA_PATH) \
+	-c ajv-formats \
+	--verbose
+
 .PHONY: up
 up: ## Start the devcontainer
 	@echo "Starting the devcontainer ($(IMAGE_NAME))..."
@@ -30,6 +45,11 @@ test: ## Test the devcontainer
 		cd ./test_project; \
 		chmod +x $(TEST_SCRIPT); \
 		./$(TEST_SCRIPT)'
+
+validate: $(IMAGE_METADATA_PATH) $(CONFIG_SCHEMA) ## Validate the config file
+	@echo "🚀 Validating the configuration file ($(IMAGE_METADATA_PATH))..."
+	@$(AJV_VALIDATE) $(AJV_VALIDATE_FLAGS) || (echo "❌ Error. Config file is invalid." && exit 1)
+	@echo "✅ OK. Config file is valid."
 
 .PHONY: help
 help: ## Display this help message.
