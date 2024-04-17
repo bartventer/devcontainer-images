@@ -75,6 +75,7 @@ jobs:
       id: bump-version
       shell: bash
       run: |
+        set -x
         chmod +x ./scripts/bump-version.sh
         VERSION=$(./scripts/bump-version.sh ${{ steps.increment.outputs.INCREMENT }} ./src/${{ matrix.image-name }})
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
