@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 # This script increments the version in metadata.json file.
 # The script expects the increment type as an argument.
-# Usage: ./scripts/bump-version.sh <increment> <config-path>
-# Example: ./scripts/bump-version.sh patch src/archlinux
+# Usage: ./scripts/bump-version.sh <config-path> <increment>
+# Example: ./scripts/bump-version.sh src/archlinux patch
 
 set -euo pipefail
 
-INCREMENT=${1:-patch}
-CONFIG_PATH=$2
+CONFIG_PATH=$1
 if [[ ! -s "${CONFIG_PATH}/metadata.json" ]]; then
     echo "(!) Metadata file not found or empty: ${CONFIG_PATH}/metadata.json"
     exit 1
 fi
+INCREMENT=${2:-patch}
 
 # Redirect all echo statements to stderr
 exec 3>&1 1>&2
@@ -38,7 +38,7 @@ echo "Version: $VERSION"
 echo "Current: $CURRENT"
 echo "Increment: $INCREMENT"
 echo "metadata.json:"
-cat metadata.json
+jq . "${CONFIG_PATH}"/metadata.json
 
 # Output the new version to stdout
 exec 1>&3

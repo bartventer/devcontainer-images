@@ -77,7 +77,10 @@ jobs:
       run: |
         set -x
         chmod +x ./scripts/bump-version.sh
-        VERSION=$(./scripts/bump-version.sh ${{ steps.increment.outputs.INCREMENT }} ./src/${{ matrix.image-name }})
+        ./scripts/bump-version.sh \
+          ./src/${{ matrix.image-name }} \
+          ${{ steps.increment.outputs.INCREMENT }}
+        VERSION=$(cat ./src/${{ matrix.image-name }}/metadata.json | jq -r '.version')
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
     - name: Set up QEMU
