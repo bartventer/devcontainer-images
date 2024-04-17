@@ -7,14 +7,14 @@
         }
     },
     "features": {
-        "ghcr.io/bartventer/devcontainer-features/common-utils:1": {
-            "installZsh": "true",
-            "username": "vscode",
-            "userUid": "1000",
-            "userGid": "1000",
-            "upgradePackages": "true",
-            "additionalPackages": "git"
-        }
+        "ghcr.io/bartventer/arch-devcontainer-features/common-utils:latest": {
+            "configureZshAsDefaultShell": true,
+            "installOhMyZshConfig": false,
+            "additionalPackages": "go nodejs npm yarn make jq yq"
+        },
+        "ghcr.io/bartventer/arch-devcontainer-features/docker-in-docker:latest": {},
+        "ghcr.io/bartventer/arch-devcontainer-features/aws-cli:latest": {},
+        "ghcr.io/bartventer/arch-devcontainer-features/terraform:latest": {}
     },
     "remoteUser": "vscode"
 }

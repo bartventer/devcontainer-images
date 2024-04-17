@@ -1,22 +1,7 @@
-# [Choice] Arch Linux version: latest
 ARG VARIANT="latest"
 FROM archlinux:${VARIANT}
 
 # Labels
 LABEL org.opencontainers.image.source=https://github.com/bartventer/devcontainer-images
-LABEL org.opencontainers.image.description="Simple Arch Linux container with Git and common utilities installed."
+LABEL org.opencontainers.image.description="Arch Linux Development Container with common tools, including go, node, npm, yarn."
 LABEL org.opencontainers.image.licenses=MIT
-
-# Adjust directory permissions
-RUN chmod 555 /srv/ftp && \
-    chmod 755 /usr/share/polkit-1/rules.d/
-
-# Initialize the pacman keyring and perform a full system upgrade
-RUN pacman-key --init && \
-    pacman-key --populate archlinux && \
-    pacman-key --populate archlinux && \
-    pacman -Sy --needed --noconfirm archlinux-keyring && \
-    pacman -Su --noconfirm
-
-# Full system upgrade
-RUN pacman -Syu --noconfirm
