@@ -51,7 +51,7 @@ jobs:
       run: |
         chmod +x ./scripts/determine-increment.sh
         # Get the previous tag for the matrix image
-        PREVIOUS_TAG=$(git describe --tags --abbrev=0 ${{ matrix.image-name }}_v* 2>/dev/null || echo "")
+        PREVIOUS_TAG=$(git tag --list "${{ matrix.image-name }}_v*" | sort -V | tail -n 1 || echo "")
         if [ -n "$PREVIOUS_TAG" ]; then
           PREVIOUS_SHA=$(git rev-list -n 1 $PREVIOUS_TAG)
         else
