@@ -1,4 +1,4 @@
-# {{imageName}}
+# {{name}}
 
 ## Summary
 *{{summary}}*
@@ -10,6 +10,8 @@
 | *Published images* | ghcr.io/bartventer/devcontainer-images/{{imageName}} |
 | *Container host OS support* | {{containerHostOSSupport}} |
 | *Container OS* | {{containerOS}} |
+| *Published image architecture(s)* | {{publishedImageArchitecture}} |
+| *Languages* | {{languages}} |
 
 ## Using this image
 You can directly reference pre-built versions of `Dockerfile` by using the `image` property in `.devcontainer/devcontainer.json` or updating the `FROM` statement in your own  `Dockerfile` to one of the following. An example `Dockerfile` is included in this repository.
@@ -19,9 +21,7 @@ Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
 You can decide how often you want updates by referencing a [semantic version](https://semver.org/) of each image. For example:
 
-- `ghcr.io/bartventer/devcontainer-images/{{imageName}}:{{majorVersion}}`
-- `ghcr.io/bartventer/devcontainer-images/{{imageName}}:{{majorVersion}}.{{minorVersion}}`
-- `ghcr.io/bartventer/devcontainer-images/{{imageName}}:{{majorVersion}}.{{minorVersion}}.{{patchVersion}}`
+{{imageNames}}
 
 ## License
 Copyright (c) Bart Venter.
