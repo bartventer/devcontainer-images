@@ -27,6 +27,8 @@ jobs:
       contents: write
       packages: write
       pull-requests: write
+    env:
+      VERSION: ""
 
     steps:
     - name: Checkout Repository
@@ -55,30 +57,31 @@ jobs:
         CURRENT=$(cat ./src/${{ github.event.inputs.image-name }}/VERSION)
         VERSION=$(semver -i ${{ github.event.inputs.increment }} $CURRENT)
         echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+        echo "Updating VERSION file with new version ($VERSION)..."
         echo "VERSION=$VERSION" > ./src/${{ github.event.inputs.image-name }}/VERSION
+        echo "OK."
         
     - name: Build Docker image for '${{ github.event.inputs.image-name }}'
       shell: bash
       working-directory: ./src/${{ github.event.inputs.image-name }}
-      env:
-        VERSION: ${{ steps.bump-version.outputs.VERSION }}
       run: |
-        echo "(*) Building Docker image for '${{ github.event.inputs.image-name }}'"
+        echo "(*) Building Docker image for '${{ github.event.inputs.image-name }} v${{env.VERSION}}'"
         devcontainer build \
           --log-level debug \
           --workspaceFolder . \
-          --image-name ghcr.io/${{ github.repository_owner }}/${{ github.event.inputs.image-name }}:$VERSION
+          --image-name ghcr.io/${{ github.repository_owner }}/${{ github.event.inputs.image-name }}:${{env.VERSION}}
+        echo "OK."
 
     - name: Push Docker image for '${{ github.event.inputs.image-name }}'
       run: |
         echo "(*) Pushing Docker image for '${{ github.event.inputs.image-name }}'"
-        docker push ghcr.io/${{ github.repository_owner }}/${{ github.event.inputs.image-name }}:$VERSION
+        docker push ghcr.io/${{ github.repository_owner }}/${{ github.event.inputs.image-name }}:${{env.VERSION}}
 
     - name: Create README for '${{ github.event.inputs.image-name }}'
       run: |
-        VERSION_MAJOR=$(echo $VERSION | cut -d. -f1)
-        VERSION_MINOR=$(echo $VERSION | cut -d. -f2)
-        VERSION_PATCH=$(echo $VERSION | cut -d. -f3)
+        VERSION_MAJOR=$(echo ${{env.VERSION}} | cut -d. -f1)
+        VERSION_MINOR=$(echo ${{env.VERSION}} | cut -d. -f2)
+        VERSION_PATCH=$(echo ${{env.VERSION}} | cut -d. -f3)
         ./scripts/generate-readme.sh ${{ github.event.inputs.image-name }} $VERSION_MAJOR $VERSION_MINOR $VERSION_PATCH
 
     - name: Create PR for Documentation
