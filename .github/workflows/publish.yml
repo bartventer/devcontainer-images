@@ -1,36 +1,45 @@
-# This workflow uses the `devcontainer` CLI to build the Docker image.
-# We chose the `devcontainer` CLI because we need integration with Dev Containers in Visual Studio Code.
-# As a result, we're not using Docker's `buildx` command for multi-architecture builds.
-# This workflow will only build the image for the host architecture (x86-64).
 name: Publish
 
 on:
   workflow_dispatch:
     inputs:
-      imageName:
+      image-name:
         type: choice
         options:
           - 'archlinux'
-          # ... add more images here
         description: 'The name of the image to build and push'
         required: true
+      increment:
+        type: choice
+        options:
+          - 'major'
+          - 'minor'
+          - 'patch'
+        description: 'The version increment type. Default is patch'
+        required: false
+        default: 'patch'
 
 jobs:
   build-push:
+    name: Build and Push Docker Image
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
+      pull-requests: write
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Install devcontainer CLI
-      run: |
-        echo "📦 Installing devcontainer CLI..."
-        npm install -g @devcontainers/cli
-        echo "✅ devcontainer CLI installed successfully."
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Install Dependencies
+      run: npm install -g @devcontainers/cli semver
 
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
@@ -39,59 +48,74 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Get latest version
-      id: latest-version
-      shell: bash
+    - name: Bump version
+      id: bump-version
       run: |
-        echo "🔍 Getting the latest version of the image from GitHub Container Registry..."
-        JSON_RESPONSE=$(curl -s https://ghcr.io/v2/${{ github.repository_owner }}/${{ github.event.inputs.imageName }}/tags/list)
-        if jq -e . >/dev/null 2>&1 <<<"$JSON_RESPONSE"; then
-          LATEST_VERSION=$(echo $JSON_RESPONSE | jq -r '.tags[]' | sort -V | tail -n 1)
-        else
-          LATEST_VERSION="0.0.0"
-        fi
-        echo "✅ Latest version: $LATEST_VERSION"
-        echo "version=${LATEST_VERSION}" >> $GITHUB_OUTPUT
-            
-    - name: Compare versions
-      id: compare-versions
+        echo "(*) Getting version from VERSION file"
+        CURRENT=$(cat ./src/${{ github.event.inputs.image-name }}/VERSION)
+        VERSION=$(semver -i ${{ github.event.inputs.increment }} $CURRENT)
+        echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+        echo "VERSION=$VERSION" > ./src/${{ github.event.inputs.image-name }}/VERSION
+        
+    - name: Build Docker image for '${{ github.event.inputs.image-name }}'
       shell: bash
-      run: |
-        echo "🔍 Comparing the new version with the latest version..."
-        VERSION=$(cat src/${{ github.event.inputs.imageName }}/VERSION)
-        LATEST_VERSION=${{ steps.latest-version.outputs.version }}
-        echo "🆕 New version: $VERSION"
-        echo "🔵 Latest version: $LATEST_VERSION"
-        if [[ $(printf '%s\n' "$VERSION" "$LATEST_VERSION" | sort -V | head -n 1) = "$VERSION" ]]; then
-          echo "valid=false" >> $GITHUB_OUTPUT
-          echo "❌ Error: The new version ($VERSION) is not larger than the current version ($LATEST_VERSION)."
-        else
-          echo "valid=true" >> $GITHUB_OUTPUT
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "✅ The new version ($VERSION) is larger than the current version ($LATEST_VERSION). Proceeding with the build..."
-        fi
-      
-    - name: Build Docker image for x86-64 on ${{ github.event.inputs.imageName }}
-      if: steps.compare-versions.outputs.valid == 'true'
-      shell: bash
+      working-directory: ./src/${{ github.event.inputs.image-name }}
       env:
-        DOCKER_BUILDKIT: 1
+        VERSION: ${{ steps.bump-version.outputs.VERSION }}
       run: |
-        echo "🏗️ Building Docker image for x86-64 on ${{ github.event.inputs.imageName }}..."
-        cd src/${{ github.event.inputs.imageName }}/.devcontainer
-        # Build the image for the new version and the latest version
-        for tag in ${{ steps.compare-versions.outputs.version }} latest; do
-          devcontainer build --tag ghcr.io/${{ github.repository_owner }}/${{ github.event.inputs.imageName }}:$tag
-          echo "✅ Docker image built successfully for tag $tag."
-        done
-      
-    - name: Push Docker image for x86-64 on ${{ github.event.inputs.imageName }}
-      shell: bash
-      if: steps.compare-versions.outputs.valid == 'true'
+        echo "(*) Building Docker image for '${{ github.event.inputs.image-name }}'"
+        devcontainer build \
+          --log-level debug \
+          --workspaceFolder . \
+          --image-name ghcr.io/${{ github.repository_owner }}/${{ github.event.inputs.image-name }}:$VERSION
+
+    - name: Push Docker image for '${{ github.event.inputs.image-name }}'
       run: |
-        echo "🚀 Pushing Docker image for x86-64 on ${{ github.event.inputs.imageName }}..."
-        # Push the image for the new version and the latest version
-        for tag in ${{ steps.compare-versions.outputs.version }} latest; do
-          docker push ghcr.io/${{ github.repository_owner }}/${{ github.event.inputs.imageName }}:$tag
-          echo "✅ Docker image pushed successfully for tag $tag."
-        done
+        echo "(*) Pushing Docker image for '${{ github.event.inputs.image-name }}'"
+        docker push ghcr.io/${{ github.repository_owner }}/${{ github.event.inputs.image-name }}:$VERSION
+
+    - name: Create README for '${{ github.event.inputs.image-name }}'
+      run: |
+        VERSION_MAJOR=$(echo $VERSION | cut -d. -f1)
+        VERSION_MINOR=$(echo $VERSION | cut -d. -f2)
+        VERSION_PATCH=$(echo $VERSION | cut -d. -f3)
+        ./scripts/generate-readme.sh ${{ github.event.inputs.image-name }} $VERSION_MAJOR $VERSION_MINOR $VERSION_PATCH
+
+    - name: Create PR for Documentation
+      id: push_image_info
+      working-directory: ./src/${{ github.event.inputs.image-name }}
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+          set -e
+          echo "Start."
+          git config --global user.email ${{vars.GH_ACTIONS_USERNAME}}@users.noreply.github.com
+          git config --global user.name ${{vars.GH_ACTIONS_USERNAME}}
+          git config pull.rebase false
+          branch=automated-documentation-update-$GITHUB_RUN_ID
+          git checkout -b $branch
+          git add ./README.md ./VERSION
+          git commit -m "chore(docs/${{ github.event.inputs.image-name }}): Automated documentation update"
+          git push origin $branch
+          gh pr create \
+              --title "chore(docs/${{ github.event.inputs.image-name }}): Automated documentation update" \
+              --body "Automated documentation update for ${{ github.event.inputs.image-name }}." \
+              --label "documentation" \
+              --assignee ${{ github.actor }} \
+              --reviewer ${{ github.actor }}
+          echo "End."
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          src/${{ github.event.inputs.image-name }}/README.md
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag_name: "${{ github.event.inputs.image-name }}_v${{ steps.bump-version.outputs.VERSION }}"
+        target_commitish: ${{ github.sha }}
+        name: "${{ github.event.inputs.image-name }} v${{ steps.bump-version.outputs.VERSION }}"
+        body_path: src/${{ github.event.inputs.image-name }}/README.md
+        make_latest: true
+        draft: false
+        prerelease: false
+        repository: ${{ github.repository }}
