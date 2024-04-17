@@ -22,9 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install Dependencies
-      run: |
-        echo "(*) Installing @devcontainer/cli"
-        yarn global add @devcontainers/cli
+      run: yarn global add @devcontainers/cli ajv-cli ajv-formats
     
     - name: Run tests for '${{ matrix.image-name }}'
       shell: bash

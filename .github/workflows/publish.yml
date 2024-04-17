@@ -2,40 +2,69 @@ name: Publish
 
 on:
   workflow_dispatch:
-    inputs:
-      image-name:
-        type: choice
-        options:
-          - 'archlinux'
-        description: 'The name of the image to build and push'
-        required: true
-      increment:
-        type: choice
-        options:
-          - 'major'
-          - 'minor'
-          - 'patch'
-        description: 'The version increment type. Default is patch'
-        required: false
-        default: 'patch'
+  push:
+    branches:
+      - master
+    paths: 
+      - 'src/**'
 
 jobs:
+  validate-metadata:
+    name: Validate Metadata
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        image-name: ['archlinux']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: yarn global add ajv-cli ajv-formats
+      - name: Validate Metadata
+        run: make IMAGE_NAME=${{ matrix.image-name }} validate
+
   build-push:
     name: Build and Push Docker Image
+    needs: validate-metadata
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
       pull-requests: write
-    env:
-      VERSION: ""
-      VERSION_MAJOR:  ""
-      VERSION_MINOR:  ""
-      VERSION_PATCH:  ""
-
+    strategy:
+      fail-fast: false
+      matrix:
+        image-name: ['archlinux']
+    outputs:
+      INCREMENT: ${{ steps.increment.outputs.INCREMENT }}
+      VERSION: ${{ steps.bump-version.outputs.VERSION }}
+    
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    - name: Determine Increment Type
+      id: increment
+      shell: bash
+      run: |
+        chmod +x ./scripts/determine-increment.sh
+        export INCREMENT=$(./scripts/determine-increment.sh \
+          ./src/${{ matrix.image-name }} \
+          ${{ github.event.before }} \
+          ${{ github.sha }}
+        )
+        echo "INCREMENT=$INCREMENT" >> $GITHUB_OUTPUT
+      
+    - name: Install Dependencies
+      run: yarn global add @devcontainers/cli semver jq
+  
+    - name: Bump Version
+      id: bump-version
+      shell: bash
+      run: |
+        chmod +x ./scripts/bump-version.sh
+        VERSION=$(./scripts/bump-version.sh ${{ steps.increment.outputs.INCREMENT }} ./src/${{ matrix.image-name }})
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -43,64 +72,28 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Install Dependencies
-      run: npm install -g @devcontainers/cli semver
-
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Bump version
-      id: bump-version
-      run: |
-        echo "(*) Getting version from VERSION file"
-        CURRENT=$(cat ./src/${{ github.event.inputs.image-name }}/VERSION)
-        VERSION=$(semver -i ${{ github.event.inputs.increment }} $CURRENT)
-        VERSION_MAJOR=$(echo $VERSION | cut -d. -f1)
-        VERSION_MINOR=$(echo $VERSION | cut -d. -f2)
-        VERSION_PATCH=$(echo $VERSION | cut -d. -f3)
-        echo "VERSION=$VERSION" >> "$GITHUB_ENV"
-        echo "VERSION_MAJOR=$VERSION_MAJOR" >> "$GITHUB_ENV"
-        echo "VERSION_MINOR=$VERSION_MINOR" >> "$GITHUB_ENV"
-        echo "VERSION_PATCH=$VERSION_PATCH" >> "$GITHUB_ENV"
-        echo "OK."
-        echo
-        echo "Updating VERSION file with new version ($VERSION)..."
-        echo "$VERSION" > ./src/${{ github.event.inputs.image-name }}/VERSION
-        echo "OK."
-
-    - name: Create README for '${{ github.event.inputs.image-name }}'
+          
+    - name: Build and Push Docker image for '${{ matrix.image-name }}'
       shell: bash
       run: |
-        ./scripts/generate-readme.sh ${{ github.event.inputs.image-name }} \
-          ${{env.VERSION_MAJOR}} \
-          ${{env.VERSION_MINOR}} \
-          ${{env.VERSION_PATCH}}
-        
-    - name: Build and Push Docker image for '${{ github.event.inputs.image-name }}'
+        REPO_NAME=$(echo "${{ github.repository }}" | awk -F '/' '{print $2}')
+        chmod +x ./scripts/build.sh
+        ./scripts/build.sh $REPO_NAME/${{ matrix.image-name }} ./src/${{ matrix.image-name }}
+
+    - name: Generate README for '${{ matrix.image-name }}'
       shell: bash
-      working-directory: ./src/${{ github.event.inputs.image-name }}
       run: |
-        echo "(*) Building Docker image for '${{ github.event.inputs.image-name }} v${{env.VERSION}}'"
-        # Only supports amd64(x86_64): see https://hub.docker.com/_/archlinux
-        devcontainer build \
-          --log-level debug \
-          --workspaceFolder . \
-          --platform linux/amd64 \
-          --image-name ghcr.io/${{ github.repository }}/${{ github.event.inputs.image-name }}:latest \
-          --image-name ghcr.io/${{ github.repository }}/${{ github.event.inputs.image-name }}:${{env.VERSION_MAJOR}} \
-          --image-name ghcr.io/${{ github.repository }}/${{ github.event.inputs.image-name }}:${{env.VERSION_MAJOR}}.${{env.VERSION_MINOR}} \
-          --image-name ghcr.io/${{ github.repository }}/${{ github.event.inputs.image-name }}:${{env.VERSION_MAJOR}}.${{env.VERSION_MINOR}}.${{env.VERSION_PATCH}} \
-          --push
-        echo "OK."
+        ./scripts/generate-readme.sh ${{ matrix.image-name }}
 
     - name: Create PR for Documentation
-      id: create-pr
       shell: bash
-      working-directory: ./src/${{ github.event.inputs.image-name }}
+      working-directory: ./src/${{ matrix.image-name }}
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
@@ -111,12 +104,12 @@ jobs:
           git config pull.rebase false
           branch=automated-documentation-update-$GITHUB_RUN_ID
           git checkout -b $branch
-          git add ./README.md ./VERSION
-          git commit -m "chore(docs/${{ github.event.inputs.image-name }}): Automated documentation update [skip ci]"
+          git add ./README.md ./metadata.json
+          git commit -m "chore(docs/${{ matrix.image-name }}): Automated documentation update [skip ci]"
           git push origin $branch
           gh pr create \
-              --title "chore(docs/${{ github.event.inputs.image-name }}): Automated documentation update" \
-              --body "Automated documentation update for ${{ github.event.inputs.image-name }}." \
+              --title "chore(docs/${{ matrix.image-name }}): Automated documentation update" \
+              --body "Automated documentation update for ${{ matrix.image-name }}." \
               --label "documentation" \
               --assignee ${{ github.actor }} \
               --reviewer ${{ github.actor }}
@@ -126,12 +119,12 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          src/${{ github.event.inputs.image-name }}/README.md
+          src/${{ matrix.image-name }}/README.md
         token: ${{ secrets.GITHUB_TOKEN }}
-        tag_name: "${{ github.event.inputs.image-name }}_v${{ env.VERSION }}"
+        tag_name: "${{ matrix.image-name }}_v${{ steps.bump-version.outputs.VERSION }}"
         target_commitish: ${{ github.sha }}
-        name: "${{ github.event.inputs.image-name }} v${{ env.VERSION }}"
-        body_path: src/${{ github.event.inputs.image-name }}/README.md
+        name: "${{ matrix.image-name }} v${{ steps.bump-version.outputs.VERSION }}"
+        body_path: src/${{ matrix.image-name }}/README.md
         make_latest: false
         draft: false
         prerelease: false
