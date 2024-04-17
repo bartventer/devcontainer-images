@@ -19,9 +19,9 @@ Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
 You can decide how often you want updates by referencing a [semantic version](https://semver.org/) of each image. For example:
 
-- `ghcr.io/bartventer/archlinux:2`
-- `ghcr.io/bartventer/archlinux:2.0`
-- `ghcr.io/bartventer/archlinux:2.0.0`
+- `ghcr.io/bartventer/archlinux:1`
+- `ghcr.io/bartventer/archlinux:1.0`
+- `ghcr.io/bartventer/archlinux:1.0.0`
 
 ## License
 Copyright (c) Bart Venter.
