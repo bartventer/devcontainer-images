@@ -99,28 +99,22 @@ else
     echo "(*) No published version found in the registry"
 fi
 
+set -x
 echo "(*) Running image build, tag and push for ${IMAGE_NAME} version ${VERSION}"
-OUTPUT_FLAG=""
-PLATFORM_FLAG=""
-if [ "${DRYRUN}" = "false" ]; then
-    OUTPUT_FLAG="--push"
-    PLATFORM_FLAG="--platform $(echo "${METADATA}" | jq -r '.platforms | join(",")')"
-    echo "(*) Image will be pushed to the registry"
-else
-    echo "(*) Dry run enabled. Image will not be pushed to the registry"
-fi
-
-# Build the image
 BUILD_OUTPUT="build-output.json"
-devcontainer build \
-    --log-level debug \
-    --workspace-folder "src/$(basename "${CONFIG_PATH}")" \
-    --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:latest" \
-    --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION}" \
-    --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION_MAJOR}" \
-    --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION_MAJOR}.${VERSION_MINOR}" \
-    --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" \
-    "${PLATFORM_FLAG}" \
-    "${OUTPUT_FLAG}" >"${BUILD_OUTPUT}"
+if [ "${DRYRUN}" = "false" ]; then
+    devcontainer build \
+        --log-level debug \
+        --workspace-folder "src/$(basename "${CONFIG_PATH}")" \
+        --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:latest" \
+        --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION}" \
+        --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION_MAJOR}" \
+        --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION_MAJOR}.${VERSION_MINOR}" \
+        --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" \
+        --platform "$(echo "${METADATA}" | jq -r '.platforms | join(",")')" \
+        --push >"${BUILD_OUTPUT}"
+else
+    echo "(*) Dry run enabled. Skipping the build and push."
+fi
 
 echo "✔️ OK. Image built, tagged and pushed to the registry. Build output: ${BUILD_OUTPUT}"
