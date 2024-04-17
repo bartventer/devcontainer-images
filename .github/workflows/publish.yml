@@ -22,6 +22,8 @@ jobs:
         image-name: ['archlinux']
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Install Dependencies
         run: yarn global add ajv-cli ajv-formats
       - name: Validate Metadata
@@ -49,6 +51,7 @@ jobs:
       id: increment
       shell: bash
       run: |
+        set -x
         chmod +x ./scripts/determine-increment.sh
         # Get the previous tag for the matrix image
         PREVIOUS_TAG=$(git tag --list "${{ matrix.image-name }}_v*" | sort -V | tail -n 1 || echo "")
@@ -57,6 +60,7 @@ jobs:
         else
           PREVIOUS_SHA=${{ github.event.before }}
         fi
+        set +x
         INCREMENT=$(./scripts/determine-increment.sh \
           ./src/${{ matrix.image-name }} \
           $PREVIOUS_SHA \

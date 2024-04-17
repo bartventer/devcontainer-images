@@ -3,7 +3,7 @@
 # The script expects the path to the configuration file and optionally the previous and current commit SHAs as arguments.
 # Usage: ./scripts/determine-increment.sh <config-path> [<previous-sha> <current-sha>]
 
-set -exuo pipefail
+set -euo pipefail
 
 # Path to the configuration file
 CONFIG_PATH=$1
