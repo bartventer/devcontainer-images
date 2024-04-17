@@ -38,6 +38,6 @@ sed -e "s/{{name}}/$(jq -r '.name' "$METADATA_FILE")/g" \
     -e "s|{{publishedImageArchitecture}}|$(jq -r '.platforms | join(", ")' "$METADATA_FILE")|g" \
     -e "s/{{languages}}/$(jq -r '.languages | join(", ")' "$METADATA_FILE")/g" \
     -e "s|{{imageNames}}|${IMAGE_NAMES}|g" \
-    doc/README-template.md | tr '@' '\n' >"src/${IMAGE_NAME}/README2.md"
+    doc/README-template.md | tr '@' '\n' >"src/${IMAGE_NAME}/README.md"
 
 echo "✔️ OK. README.md file is generated for $IMAGE_NAME."
