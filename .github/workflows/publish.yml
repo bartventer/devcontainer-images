@@ -132,7 +132,7 @@ jobs:
         target_commitish: ${{ github.sha }}
         name: "${{ github.event.inputs.image-name }} v${{ env.VERSION }}"
         body_path: src/${{ github.event.inputs.image-name }}/README.md
-        make_latest: true
+        make_latest: false
         draft: false
         prerelease: false
         repository: ${{ github.repository }}
