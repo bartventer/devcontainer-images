@@ -1,15 +1,17 @@
-# archlinux
+# Arch Linux
 
 ## Summary
-*Arch Linux base image with the latest updates. Includes common tools, extensions, as well as the latest versions of Go, Node.js, npm, Yarn, make, jq and yq.*
+*Arch Linux base image with the latest updates. Includes common tools, extensions and dependencies.*
 
 | Metadata | Value |
 |----------|-------|
-| *Contributors* | [Bart Venter](https://github.com/bartventer) |
+| *Contributors* | [Bart Venter](https://github.com/bartvener) |
 | *Definition type* | Dockerfile |
 | *Published images* | ghcr.io/bartventer/devcontainer-images/archlinux |
 | *Container host OS support* | Linux, macOS, Windows |
-| *Container OS* | Arch Linux |
+| *Container OS* | OS: Linux, Distribution: Arch |
+| *Published image architecture(s)* | linux/amd64 |
+| *Languages* | Go, Python, Node.js |
 
 ## Using this image
 You can directly reference pre-built versions of `Dockerfile` by using the `image` property in `.devcontainer/devcontainer.json` or updating the `FROM` statement in your own  `Dockerfile` to one of the following. An example `Dockerfile` is included in this repository.
@@ -19,9 +21,12 @@ Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
 You can decide how often you want updates by referencing a [semantic version](https://semver.org/) of each image. For example:
 
+- `ghcr.io/bartventer/devcontainer-images/archlinux:latest`
+- `ghcr.io/bartventer/devcontainer-images/archlinux:1.1.0`
 - `ghcr.io/bartventer/devcontainer-images/archlinux:1`
-- `ghcr.io/bartventer/devcontainer-images/archlinux:1.0`
-- `ghcr.io/bartventer/devcontainer-images/archlinux:1.0.1`
+- `ghcr.io/bartventer/devcontainer-images/archlinux:1.1`
+- `ghcr.io/bartventer/devcontainer-images/archlinux:1.1.0`
+
 
 ## License
 Copyright (c) Bart Venter.
