@@ -34,9 +34,9 @@ fi
 
 # Check if the commit messages include any of the following keywords
 increment_type="patch"
-if echo "$COMMIT_MESSAGES" | grep -qE 'BREAKING CHANGE|major'; then
+if echo "$COMMIT_MESSAGES" | grep -qE 'BREAKING CHANGE'; then
     increment_type="major"
-elif echo "$COMMIT_MESSAGES" | grep -qE 'feat|feature|minor'; then
+elif echo "$COMMIT_MESSAGES" | grep -qE '^feat(\(.+\))?:'; then
     increment_type="minor"
 fi
 
