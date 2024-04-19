@@ -3,7 +3,7 @@
     "features": {
         "ghcr.io/devcontainers/features/docker-in-docker:2": {}
     },
-    "postCreateCommand": "npm install -g @devcontainers/cli semver",
+    "postCreateCommand": "yarn install && yarn install -g @devcontainers/cli",
     "customizations": {
         "vscode": {
             "extensions": [
