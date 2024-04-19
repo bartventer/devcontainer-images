@@ -1,6 +1,17 @@
 {
-    "tagFormat": "{{ imageName }}_v${version}",
+    "debug": true,
+    "branches": [
+        "+([0-9])?(.{+([0-9]),x}).x",
+        "master",
+        {
+            "name": "beta",
+            "prerelease": true
+        }
+    ],
     "plugins": [
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
+        "@semantic-release/github",
         [
             "@semantic-release/exec",
             {
@@ -10,5 +21,6 @@
             }
         ]
     ],
+    "tagFormat": "{{ imageName }}_v${version}",
     "preset": "angular"
 }

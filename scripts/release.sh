@@ -12,19 +12,21 @@ RELEASERC_JSON=$(sed \
     -e "s/{{ repoName }}/$2/g" \
     "${RELEASERC_TEMPLATE}")
 
-# Write the configuration to a temporary file
-TEMP_CONFIG_FILE=$(mktemp -d)/.releaserc.json
-echo "${RELEASERC_JSON}" >"${TEMP_CONFIG_FILE}"
+# Backup the existing .releaserc.json file if it exists
+[ -f .releaserc.json ] && cp .releaserc.json .releaserc.json.bak
+
+# Write the configuration to .releaserc.json
+echo "${RELEASERC_JSON}" >.releaserc.json
+
+# Set a trap to restore the original .releaserc.json file when the script exits
+trap '[ -f .releaserc.json.bak ] && mv .releaserc.json.bak .releaserc.json' EXIT
 
 echo "🚀 Starting new release for $1..."
 
 if [[ "${CI:-false}" == "true" ]]; then
-    npx semantic-release --extends "${TEMP_CONFIG_FILE}"
+    npx semantic-release
 else
-    npx semantic-release --extends "${TEMP_CONFIG_FILE}" --dry-run
+    npx semantic-release --dry-run
 fi
-
-# Clean up
-rm "${TEMP_CONFIG_FILE}"
 
 echo "✔️ OK. New release created for $1"
