@@ -65,6 +65,7 @@ jobs:
       - name: Release
         env:
           GH_ACTIONS_USERNAME: ${{ vars.GH_ACTIONS_USERNAME }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           chmod +x scripts/release.sh
           REPO_NAME=$(echo "${{ github.repository }}" | awk -F '/' '{print $2}')
