@@ -1,2 +1,5 @@
 # Build
 build-output.json
+
+# Node.js
+node_modules/
