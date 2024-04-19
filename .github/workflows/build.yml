@@ -11,7 +11,7 @@ on:
       - '!src/*/README.md'
 
 jobs:
-  validate-metadata:
+  validate:
     name: Validate Metadata
     runs-on: ubuntu-latest
     permissions:
@@ -22,14 +22,19 @@ jobs:
         image-name: ['archlinux']
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
       - name: Install Dependencies
-        run: yarn global add ajv-cli ajv-formats
+        run: yarn install
       - name: Validate Metadata
         run: make IMAGE_NAME=${{ matrix.image-name }} validate
 
-  build-push:
-    name: Build and Push Docker Image
-    needs: validate-metadata
+  release:
+    name: Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -39,110 +44,26 @@ jobs:
       fail-fast: false
       matrix:
         image-name: ['archlinux']
-    outputs:
-      INCREMENT: ${{ steps.increment.outputs.INCREMENT }}
-      VERSION: ${{ steps.bump-version.outputs.VERSION }}
-    
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - name: Determine Increment Type
-      id: increment
-      shell: bash
-      run: |
-        set -x
-        chmod +x ./scripts/determine-increment.sh
-        # Get the previous tag for the matrix image
-        PREVIOUS_TAG=$(git tag --list "${{ matrix.image-name }}_v*" | sort -V | tail -n 1 || echo "")
-        if [ -n "$PREVIOUS_TAG" ]; then
-          PREVIOUS_SHA=$(git rev-list -n 1 $PREVIOUS_TAG)
-        else
-          PREVIOUS_SHA=${{ github.event.before }}
-        fi
-        set +x
-        INCREMENT=$(./scripts/determine-increment.sh \
-          ./src/${{ matrix.image-name }} \
-          $PREVIOUS_SHA \
-          ${{ github.sha }}
-        )
-        echo "INCREMENT=$INCREMENT" >> $GITHUB_OUTPUT
-      
-    - name: Install Dependencies
-      run: yarn global add @devcontainers/cli semver
-  
-    - name: Bump Version
-      id: bump-version
-      shell: bash
-      run: |
-        set -x
-        chmod +x ./scripts/bump-version.sh
-        ./scripts/bump-version.sh \
-          ./src/${{ matrix.image-name }} \
-          ${{ steps.increment.outputs.INCREMENT }}
-        VERSION=$(cat ./src/${{ matrix.image-name }}/metadata.json | jq -r '.version')
-        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-          
-    - name: Build and Push Docker image for '${{ matrix.image-name }}'
-      shell: bash
-      run: |
-        REPO_NAME=$(echo "${{ github.repository }}" | awk -F '/' '{print $2}')
-        chmod +x ./scripts/build.sh
-        ./scripts/build.sh $REPO_NAME/${{ matrix.image-name }} ./src/${{ matrix.image-name }}
-
-    - name: Generate README for '${{ matrix.image-name }}'
-      shell: bash
-      run: |
-        ./scripts/generate-readme.sh ${{ matrix.image-name }}
-
-    - name: Create PR for Documentation
-      shell: bash
-      working-directory: ./src/${{ matrix.image-name }}
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-          set -e
-          echo "Start."
-          git config --global user.email ${{vars.GH_ACTIONS_USERNAME}}@users.noreply.github.com
-          git config --global user.name ${{vars.GH_ACTIONS_USERNAME}}
-          git config pull.rebase false
-          branch=automated-documentation-update-$GITHUB_RUN_ID
-          git checkout -b $branch
-          git add ./README.md ./metadata.json
-          git commit -m "chore(docs/${{ matrix.image-name }}): Automated documentation update [skip ci]"
-          git push origin $branch
-          gh pr create \
-              --title "chore(docs/${{ matrix.image-name }}): Automated documentation update" \
-              --body "Automated documentation update for ${{ matrix.image-name }}." \
-              --label "documentation" \
-              --assignee ${{ github.actor }} \
-              --reviewer ${{ github.actor }}
-          echo "End."
-
-    - name: Create Release
-      uses: softprops/action-gh-release@v2
-      with:
-        files: |
-          src/${{ matrix.image-name }}/README.md
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag_name: "${{ matrix.image-name }}_v${{ steps.bump-version.outputs.VERSION }}"
-        target_commitish: ${{ github.sha }}
-        name: "${{ matrix.image-name }} v${{ steps.bump-version.outputs.VERSION }}"
-        body_path: src/${{ matrix.image-name }}/README.md
-        make_latest: false
-        draft: false
-        prerelease: false
-        repository: ${{ github.repository }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          sparse-checkout: |
+            src/${{ matrix.image-name }}
+            doc/.image.releaserc.json
+            scripts
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
+      - name: Install Dependencies
+        run: yarn install
+      - name: Release
+        env:
+          GH_ACTIONS_USERNAME: ${{ vars.GH_ACTIONS_USERNAME }}
+        run: |
+          chmod +x scripts/release.sh
+          scripts/release.sh ${{ matrix.image-name }} $REPO_NAME

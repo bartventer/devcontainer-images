@@ -5,16 +5,13 @@
     "description": "Metadata for a container image.",
     "additionalProperties": false,
     "properties": {
-        "version": {
-            "type": "string",
-            "description": "Semantic version of the image (https://semver.org/).",
-            "minLength": 5,
-            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
         "name": {
             "type": "string",
             "description": "Name of the image.",
-            "minLength": 1
+            "minLength": 1,
+            "examples": [
+                "Arch Linux"
+            ]
         },
         "summary": {
             "type": "string",
@@ -179,9 +176,36 @@
                     "Node.js"
                 ]
             }
+        },
+        "features": {
+            "type": "array",
+            "description": "List of features provided by the image.",
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the feature.",
+                        "minLength": 1
+                    },
+                    "documentation": {
+                        "type": "string",
+                        "description": "Link to the feature's documentation.",
+                        "format": "uri",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "name",
+                    "documentation"
+                ]
+            }
         }
     },
     "required": [
+        "name",
         "summary",
         "contributors",
         "definitionType",

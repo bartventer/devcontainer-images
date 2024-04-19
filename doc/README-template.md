@@ -12,10 +12,12 @@
 | *Container OS* | {{containerOS}} |
 | *Published image architecture(s)* | {{publishedImageArchitecture}} |
 | *Languages* | {{languages}} |
+| *Features* | {{features}} |
+
 
 ## Using this image
 You can directly reference pre-built versions of `Dockerfile` by using the `image` property in `.devcontainer/devcontainer.json` or updating the `FROM` statement in your own  `Dockerfile` to one of the following. An example `Dockerfile` is included in this repository.
-- `ghcr.io/bartventer/devcontainer-images/{{imageName}}` (latest)
+- `ghcr.io/bartventer/devcontainer-images/{{imageName}}` _(latest)_
 
 Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 

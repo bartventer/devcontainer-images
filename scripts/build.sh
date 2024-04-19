@@ -11,7 +11,8 @@ CONFIG_PATH="${2:-.}"
 if [[ $CONFIG_PATH == "." ]]; then
     CONFIG_PATH=$(pwd)
 fi
-DRYRUN="${3:-false}"
+VERSION=$3
+DRYRUN="${4:-false}"
 
 CR="${CR:-ghcr.io}"
 NAMESPACE="${NAMESPACE:-${GITHUB_REPOSITORY_OWNER}}"
@@ -22,82 +23,15 @@ if [[ -z "${IMAGE_NAME}" ]]; then
 elif [[ ! -s "${CONFIG_PATH}/metadata.json" ]]; then
     echo "(!) Metadata file not found or empty: ${CONFIG_PATH}/metadata.json"
     exit 1
+elif [[ ! "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "(!) Invalid version provided: ${VERSION}"
+    exit 1
 fi
 
 METADATA=$(jq -r '.' "${CONFIG_PATH}/metadata.json")
-VERSION=$(echo "$METADATA" | jq -r '.version')
-if ! [[ "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    echo "(!) Invalid version format: ${VERSION}"
-    exit 1
-fi
 VERSION_MAJOR=$(echo "$VERSION" | cut -d. -f1)
 VERSION_MINOR=$(echo "$VERSION" | cut -d. -f2)
 VERSION_PATCH=$(echo "$VERSION" | cut -d. -f3)
-
-# Get the latest version from the container registry
-get_latest_version() {
-    local image_name=$1
-    local cr=$2
-    local namespace=$3
-    local latest_version
-    case "${cr}" in
-    ghcr.io)
-        local token
-        token=$(curl -s "https://ghcr.io/token?scope=repository:${namespace}/${image_name}:pull" | awk -F'"' '$0=$4')
-        tags=$(curl -sSL \
-            -H "Authorization: Bearer ${token}" \
-            "https://ghcr.io/v2/${namespace}/${image_name}/tags/list" | jq -r '.tags[]')
-        echo -e " Tags:${tags}" >&2
-        latest_version=$(echo "${tags}" | grep -E '^[0-9.]+$' | sort -rV | head -n1)
-        ;;
-    *)
-        echo "(!) Unsupported container registry: ${cr}"
-        exit 1
-        ;;
-    esac
-    echo "${latest_version}"
-}
-
-# Compare two semantic versions.
-# Returns 0 if version1 is greater than version2
-# Returns 1 if version1 is less than version2
-# Returns 2 if version1 is equal to version2
-compare_versions() {
-    local version1=$1
-    local version2=$2
-    if [[ "${version1}" == "${version2}" ]]; then
-        echo 2
-    elif [[ "$(printf "%s\n" "${version1}" "${version2}" | sort -V | head -n1)" == "${version1}" ]]; then
-        echo 1
-    else
-        echo 0
-    fi
-}
-
-# Check if the version is already published
-LATEST_VERSION=$(get_latest_version "${IMAGE_NAME}" "${CR}" "${NAMESPACE}")
-if [[ -n "${LATEST_VERSION}" ]]; then
-    echo "(*) Latest version in the registry: ${LATEST_VERSION}"
-    case $(compare_versions "${VERSION}" "${LATEST_VERSION}") in
-    0) echo "(*) Version ${VERSION} is greater than the latest version ${LATEST_VERSION}" ;;
-    1)
-        echo "(*) Version ${VERSION} is less than the latest version ${LATEST_VERSION}"
-        echo "(!) Version ${VERSION} is already published. Skipping the build."
-        exit 0
-        ;;
-    2)
-        echo "(*) Version ${VERSION} is equal to the latest version ${LATEST_VERSION}"
-        echo "(!) Version ${VERSION} is already published. Skipping the build."
-        exit 0
-        ;;
-    *)
-        echo "(!) Invalid version comparison result found (expected: 0, 1, or 2), got: $?"
-        exit 1
-        ;;
-    esac
-else
-    echo "(*) No published version found in the registry"
-fi
 
 echo "(*) Running image build, tag and push for ${IMAGE_NAME} version ${VERSION}"
 BUILD_OUTPUT="${CONFIG_PATH}/build-output.json"
@@ -112,6 +46,13 @@ if [ "${DRYRUN}" = "false" ]; then
         --image-name "${CR}/${NAMESPACE}/${IMAGE_NAME}:${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" \
         --platform "$(echo "${METADATA}" | jq -r '.platforms | join(",")')" \
         --push >"${BUILD_OUTPUT}"
+
+    # Generate updated readme
+    ./scripts/generate-readme.sh "${IMAGE_NAME}"
+
+    # Create PR for the updated documentation
+    ./scripts/create-pr.sh "${IMAGE_NAME}"
+
 else
     echo "(*) Dry run enabled. Skipping the build and push."
 fi

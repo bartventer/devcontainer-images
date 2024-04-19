@@ -1,0 +1,14 @@
+{
+    "tagFormat": "{{ imageName }}_v${version}",
+    "plugins": [
+        [
+            "@semantic-release/exec",
+            {
+                "prepareCmd": "./scripts/build.sh {{ repoName }}/{{ imageName }} ./src/{{ imageName }} ${nextRelease.version}",
+                "shell": "bash",
+                "execCwd": "."
+            }
+        ]
+    ],
+    "preset": "angular"
+}
