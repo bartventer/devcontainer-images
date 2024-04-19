@@ -61,5 +61,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           chmod +x scripts/release.sh
-          REPO_NAME=$(echo "${{ github.repository }}" | awk -F '/' '{print $2}')
-          scripts/release.sh ${{ matrix.image-name }} $REPO_NAME
+          scripts/release.sh ${{ matrix.image-name }}

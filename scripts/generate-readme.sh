@@ -3,7 +3,7 @@
 # The script expects the image name and version as arguments.
 # Usage: ./scripts/generate-readme.sh <image-name> <major-version> <minor-version> <patch-version>
 
-set -euo pipefail
+set -euxo pipefail
 
 IMAGE_NAME=${1:-}
 BUILD_OUTPUT_FILE="src/${IMAGE_NAME}/build-output.json"

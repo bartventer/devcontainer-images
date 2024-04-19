@@ -9,7 +9,6 @@ set -euo pipefail
 RELEASERC_TEMPLATE="./doc/.releaserc-template.json"
 RELEASERC_JSON=$(sed \
     -e "s/{{ imageName }}/$1/g" \
-    -e "s/{{ repoName }}/$2/g" \
     "${RELEASERC_TEMPLATE}")
 
 # Backup the existing .releaserc.json file if it exists
