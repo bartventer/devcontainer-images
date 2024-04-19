@@ -38,7 +38,7 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: yarn.lock
       - name: Install Dependencies
-        run: yarn install
+        run: yarn install && yarn global add @devcontainers/cli
       - name: Validate Metadata
         run: make IMAGE_NAME=${{ matrix.image-name }} validate
       - name: Build, Push and Release
