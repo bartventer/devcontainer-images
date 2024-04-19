@@ -12,20 +12,21 @@
 | *Container OS* | OS: Linux, Distribution: Arch |
 | *Published image architecture(s)* | linux/amd64 |
 | *Languages* | Go, Python, Node.js |
+| *Features* | [Common Utilities](https://github.com/bartventer/arch-devcontainer-features/tree/main/src/common-utils/README.md), [AWS CLI](https://github.com/bartventer/arch-devcontainer-features/tree/main/src/aws-cli/README.md), [Docker in Docker](https://github.com/bartventer/arch-devcontainer-features/tree/main/src/docker-in-docker/README.md), [Terraform](https://github.com/bartventer/arch-devcontainer-features/tree/main/src/terraform/README.md) |
+
 
 ## Using this image
 You can directly reference pre-built versions of `Dockerfile` by using the `image` property in `.devcontainer/devcontainer.json` or updating the `FROM` statement in your own  `Dockerfile` to one of the following. An example `Dockerfile` is included in this repository.
-- `ghcr.io/bartventer/devcontainer-images/archlinux` (latest)
+- `ghcr.io/bartventer/devcontainer-images/archlinux` _(latest)_
 
 Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
 You can decide how often you want updates by referencing a [semantic version](https://semver.org/) of each image. For example:
 
-- `ghcr.io/bartventer/devcontainer-images/archlinux:latest`
-- `ghcr.io/bartventer/devcontainer-images/archlinux:1.1.0`
 - `ghcr.io/bartventer/devcontainer-images/archlinux:1`
 - `ghcr.io/bartventer/devcontainer-images/archlinux:1.1`
-- `ghcr.io/bartventer/devcontainer-images/archlinux:1.1.0`
+- `ghcr.io/bartventer/devcontainer-images/archlinux:1.1.2`
+- `ghcr.io/bartventer/devcontainer-images/archlinux:latest`
 
 
 ## License
