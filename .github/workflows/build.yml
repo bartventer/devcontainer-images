@@ -22,6 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         image-name: ['archlinux']
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,14 +32,17 @@ jobs:
             src/${{ matrix.image-name }}
             doc
             scripts
+            
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: package.json
           cache: 'yarn'
           cache-dependency-path: yarn.lock
+
       - name: Install Dependencies
         run: yarn install && yarn global add @devcontainers/cli
+
       - name: Validate Metadata
         run: make IMAGE_NAME=${{ matrix.image-name }} validate
 

@@ -35,7 +35,7 @@ gh pr create \
     --title "chore(docs/${IMAGE_NAME}): Automated documentation update" \
     --body "Automated documentation update for ${IMAGE_NAME}." \
     --label "documentation" \
-    --assignee "${GH_ACTOR}" \
-    --reviewer "${GH_ACTOR}"
+    --assignee "${GITHUB_ACTOR}" \
+    --reviewer "${GITHUB_ACTOR}"
 
 echo "OK. Created a PR for the automated documentation update."
