@@ -11,32 +11,9 @@ on:
       - '!src/*/README.md'
 
 jobs:
-  validate:
-    name: Validate Metadata
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        image-name: ['archlinux']
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: package.json
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-      - name: Install Dependencies
-        run: yarn install
-      - name: Validate Metadata
-        run: make IMAGE_NAME=${{ matrix.image-name }} validate
-
   release:
-    name: Release
+    name: Build and Release
     runs-on: ubuntu-latest
-    needs: validate
     permissions:
       contents: write
       packages: write
@@ -62,7 +39,9 @@ jobs:
           cache-dependency-path: yarn.lock
       - name: Install Dependencies
         run: yarn install
-      - name: Release
+      - name: Validate Metadata
+        run: make IMAGE_NAME=${{ matrix.image-name }} validate
+      - name: Build, Push and Release
         env:
           GH_ACTIONS_USERNAME: ${{ vars.GH_ACTIONS_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
