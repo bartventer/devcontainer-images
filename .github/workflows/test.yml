@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         image-name: [
-            'archlinux'
+            'base-archlinux'
         ] 
 
     steps:
