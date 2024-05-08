@@ -22,7 +22,7 @@ The `archlinux` image provides a base Arch Linux environment for development con
 
 #### usage
 
-Refer to the [image documentation](src/archlinux/README.md) for usage instructions and additional options.
+Refer to the [image documentation](src/base-archlinux/README.md) for usage instructions and additional options.
 
 ## Contributing
 
