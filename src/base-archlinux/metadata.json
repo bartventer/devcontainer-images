@@ -1,6 +1,6 @@
 {
     "name": "Arch Linux",
-    "summary": "Arch Linux base image with the latest updates. Includes common tools, extensions and dependencies.",
+    "summary": "Simple Arch Linux container with common tools installed.",
     "contributors": [
         {
             "name": "Bart Venter",
@@ -29,18 +29,6 @@
         {
             "name": "Common Utilities",
             "documentation": "https://github.com/bartventer/arch-devcontainer-features/tree/main/src/common-utils/README.md"
-        },
-        {
-            "name": "AWS CLI",
-            "documentation": "https://github.com/bartventer/arch-devcontainer-features/tree/main/src/aws-cli/README.md"
-        },
-        {
-            "name": "Docker in Docker",
-            "documentation": "https://github.com/bartventer/arch-devcontainer-features/tree/main/src/docker-in-docker/README.md"
-        },
-        {
-            "name": "Terraform",
-            "documentation": "https://github.com/bartventer/arch-devcontainer-features/tree/main/src/terraform/README.md"
         }
     ]
 }
