@@ -11,7 +11,7 @@
 | *Container host OS support* | Linux, macOS, Windows |
 | *Container OS* | OS: Linux, Distribution: Arch |
 | *Published image architecture(s)* | linux/amd64 |
-| *Languages* | Go, Python, Node.js |
+| *Languages* | Python, Node.js |
 | *Features* | [Common Utilities](https://github.com/bartventer/arch-devcontainer-features/tree/main/src/common-utils/README.md) |
 
 
