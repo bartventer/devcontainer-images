@@ -21,7 +21,6 @@
         "linux/amd64"
     ],
     "languages": [
-        "Go",
         "Python",
         "Node.js"
     ],
