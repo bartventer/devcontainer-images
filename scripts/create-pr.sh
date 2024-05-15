@@ -10,6 +10,10 @@ IMAGE_NAME=${1}
 
 echo "Creating a PR for the automated documentation update..."
 
+# Switch back to the current branch on exit
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+trap 'git checkout $current_branch' EXIT
+
 # Set up git
 git config --global user.email "${GH_ACTIONS_USERNAME}@users.noreply.github.com"
 git config --global user.name "${GH_ACTIONS_USERNAME}"
