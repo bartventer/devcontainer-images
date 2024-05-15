@@ -7,22 +7,11 @@
 
 This repository contains a _collection_ of Docker images for development containers curated by [@bartventer](https://github.com/bartventer).
 
-## Table of Contents
-
--   [Images](#images)
-    -   [archlinux](#archlinux)
--   [Contributing](#contributing)
--   [License](#license)
-
 ## Images
 
-### archlinux
-
-The `archlinux` image provides a base Arch Linux environment for development containers.
-
-#### usage
-
-Refer to the [image documentation](src/base-archlinux/README.md) for usage instructions and additional options.
+| Image                                                            | Description                                                                                             |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| [archlinux](src/base-archlinux/README.md)                        | The `archlinux` image provides a base Arch Linux environment for development containers.                |
 
 ## Contributing
 
