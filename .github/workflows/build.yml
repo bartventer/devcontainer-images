@@ -39,7 +39,7 @@ jobs:
             package.json
             yarn.lock
             
-      - uses: ./.github/workflows/setup-node.yml
+      - uses: ./.github/actions/setup-node
 
       - name: Install Dependencies
         run: yarn global add @devcontainers/cli
