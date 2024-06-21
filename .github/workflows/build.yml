@@ -2,16 +2,18 @@ name: Build
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-    paths:
-      - 'src/**'
-      # To prevent the workflow from triggering itself
-      - '!src/*/README.md'
+  schedule:
+    # Every day at 00:00 UTC
+    - cron: '0 0 * * *' 
+  workflow_run: 
+    workflows: ["Test"]
+    branches: [master]
+    types:
+      - completed
 
 jobs:
   release:
+    if: ${{ contains(fromJson('[ "workflow_dispatch", "schedule" ]'), github.event_name) || github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}
     name: Build and Release
     runs-on: ubuntu-latest
     permissions:
@@ -33,20 +35,14 @@ jobs:
           fetch-tags: true
           sparse-checkout: |
             src/${{ matrix.image-name }}
-            doc
             scripts
             package.json
             yarn.lock
             
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: package.json
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
+      - uses: ./.github/workflows/setup-node.yml
 
       - name: Install Dependencies
-        run: yarn install && yarn global add @devcontainers/cli
+        run: yarn global add @devcontainers/cli
 
       - name: Validate Metadata
         run: make IMAGE_NAME=${{ matrix.image-name }} validate
@@ -79,5 +75,4 @@ jobs:
           GH_ACTIONS_USERNAME: ${{ vars.GH_ACTIONS_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          chmod +x scripts/release.sh
-          scripts/release.sh ${{ matrix.image-name }}
+          scripts/build.sh ${{ matrix.image-name }}

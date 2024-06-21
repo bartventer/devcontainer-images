@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # This script generates a README.md file for the image based on the template.
 # The script expects the image name and version as arguments.
-# Usage: ./scripts/generate-readme.sh <image-name> <major-version> <minor-version> <patch-version>
+# Usage: ./scripts/generate-readme.sh <image-name> <version>
+# Example: ./scripts/generate-readme.sh archlinux 1.0.0
 
 set -euxo pipefail
 

@@ -7,11 +7,11 @@
 set -euo pipefail
 
 IMAGE_NAME=$1
-VERSION=$2
-DRYRUN="${3:-false}"
+DRYRUN="${2:-false}"
 
 CR="${CR:-ghcr.io}"
 GITHUB_REPOSITORY="${GITHUB_REPOSITORY:-$(git config --get remote.origin.url | sed 's/.*://;s/.git$//')}"
+VERSION=$(./scripts/next-version.sh --version-file "src/${IMAGE_NAME}/VERSION")
 
 if [[ -z "${IMAGE_NAME}" ]]; then
     echo "(!) Image name not provided"
