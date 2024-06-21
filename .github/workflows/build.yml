@@ -34,6 +34,7 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           sparse-checkout: |
+            .github/actions/setup-node
             src/${{ matrix.image-name }}
             scripts
             package.json
