@@ -54,6 +54,6 @@ awk -v name="$(jq -r '.name' "$METADATA_FILE")" \
         gsub("{{features}}", features);
         gsub("%", "\n");
         print;
-    }' doc/README-template.md >"src/${IMAGE_NAME}/README.md"
+    }' docs/README-template.md >"src/${IMAGE_NAME}/README.md"
 
 echo "✔️ OK. README.md file is generated for $IMAGE_NAME."

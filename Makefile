@@ -16,7 +16,7 @@ DEVCONTAINER_UP_FLAGS=--workspace-folder ./src/$(IMAGE_NAME)
 DEVCONTAINER_EXEC_FLAGS=--workspace-folder ./src/$(IMAGE_NAME)
 
 # Config variables
-CONFIG_SCHEMA=doc/schema.json
+CONFIG_SCHEMA=docs/schema.json
 IMAGE_METADATA_PATH?=./src/$(IMAGE_NAME)/metadata.json
 
 # Config Validation Command
