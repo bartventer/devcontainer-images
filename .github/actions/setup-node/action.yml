@@ -25,3 +25,9 @@ runs:
         node-version-file: "${{ inputs.node-version-file }}"
         cache: "${{ inputs.cache }}"
         cache-dependency-path: "${{ inputs.cache-dependency-path }}"
+    - name: Install Dependencies
+      shell: bash
+      run: |
+        echo "Installing dependencies..."
+        yarn install
+        echo "Dependencies installed"
