@@ -26,7 +26,7 @@ git checkout -b "$branch"
 # Add changes to the branch
 git add \
     src/"${IMAGE_NAME}"/README.md \
-    src/"${IMAGE_NAME}"/metadata.json
+    src/"${IMAGE_NAME}"/VERSION
 
 # Commit the changes
 git commit -m "chore(docs/${IMAGE_NAME}): Automated documentation update [skip ci]"
@@ -35,11 +35,28 @@ git commit -m "chore(docs/${IMAGE_NAME}): Automated documentation update [skip c
 git push origin "$branch"
 
 # Create a PR
-gh pr create \
-    --title "chore(docs/${IMAGE_NAME}): Automated documentation update" \
-    --body "Automated documentation update for ${IMAGE_NAME}." \
-    --label "documentation" \
-    --assignee "${GITHUB_ACTOR}" \
-    --reviewer "${GITHUB_ACTOR}"
+pr_url=$(
+    gh pr create \
+        --title "chore(docs/${IMAGE_NAME}): Automated documentation update" \
+        --label "documentation" \
+        --assignee "${GITHUB_ACTOR}" \
+        --reviewer "${GITHUB_ACTOR}" \
+        --body <<EOF
+:robot: Automated documentation update for ${IMAGE_NAME}.
 
-echo "OK. Created a PR for the automated documentation update."
+This PR updates the README and version files for the image based on the latest changes.
+
+Co-authored-by: Bart Venter <bartventer@outlook.com>
+EOF
+)
+
+# Extract PR number from the PR URL
+pr_number=$(echo "$pr_url" | grep -o '[0-9]\+$')
+
+# Enable auto-merge for the PR
+gh pr merge "$pr_number" \
+    --auto \
+    --rebase \
+    --delete-branch
+
+echo "Done. Created a PR for the automated documentation update and enabled auto-merge."
