@@ -42,7 +42,6 @@ pr_url=$(
     gh pr create \
         --fill \
         --label "documentation" \
-        --label "automated" \
         --assignee "${GITHUB_ACTOR}" \
         --reviewer "${GITHUB_ACTOR}"
 )
