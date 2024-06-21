@@ -28,17 +28,9 @@ jobs:
       platforms: ${{ steps.platforms.outputs.platforms }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          fetch-tags: true
-          sparse-checkout: |
-            .github/actions/setup-node
-            src/${{ matrix.image-name }}
-            scripts
-            package.json
-            yarn.lock
             
       - uses: ./.github/actions/setup-node
 
