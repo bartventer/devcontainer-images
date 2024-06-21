@@ -20,7 +20,7 @@ CONFIG_SCHEMA=docs/schema.json
 IMAGE_METADATA_PATH?=./src/$(IMAGE_NAME)/metadata.json
 
 # Config Validation Command
-AJV=npx ajv
+AJV=yarn ajv
 AJV_VALIDATE=$(AJV) validate
 
 # Config Validation Flags
