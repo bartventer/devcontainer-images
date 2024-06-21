@@ -13,7 +13,7 @@ on:
 
 jobs:
   release:
-    if: ${{ contains(fromJson('[ "workflow_dispatch", "schedule" ]'), github.event_name) || github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ contains(fromJSON('["workflow_dispatch", "schedule"]'), github.event_name) || github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}
     name: Build and Release
     runs-on: ubuntu-latest
     permissions:
