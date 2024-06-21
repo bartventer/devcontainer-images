@@ -29,7 +29,10 @@ git add \
     src/"${IMAGE_NAME}"/VERSION
 
 # Commit the changes
-git commit -m "chore(docs/${IMAGE_NAME}): Automated documentation update [skip ci]"
+git commit \
+    -m "chore(docs/${IMAGE_NAME}): Automated documentation update [skip ci]" \
+    -m "This PR updates the README and version files for the image based on the latest changes." \
+    -m "Co-authored-by: Bart Venter <bartventer@outlook.com>"
 
 # Push the changes
 git push origin "$branch"
@@ -37,17 +40,11 @@ git push origin "$branch"
 # Create a PR
 pr_url=$(
     gh pr create \
-        --title "chore(docs/${IMAGE_NAME}): Automated documentation update" \
+        --fill \
         --label "documentation" \
+        --label "automated" \
         --assignee "${GITHUB_ACTOR}" \
-        --reviewer "${GITHUB_ACTOR}" \
-        --body <<EOF
-:robot: Automated documentation update for ${IMAGE_NAME}.
-
-This PR updates the README and version files for the image based on the latest changes.
-
-Co-authored-by: Bart Venter <bartventer@outlook.com>
-EOF
+        --reviewer "${GITHUB_ACTOR}"
 )
 
 # Extract PR number from the PR URL
