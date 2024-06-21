@@ -21,8 +21,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - uses: ./.github/workflows/setup-node.yml
     - name: Install Dependencies
-      run: yarn global add @devcontainers/cli ajv-cli ajv-formats
+      run: yarn global add @devcontainers/cli
     
     - name: Run tests for '${{ matrix.image-name }}'
       shell: bash
@@ -40,9 +41,8 @@ jobs:
         issues: write
     steps:
         - uses: actions/checkout@v4
+        - uses: ./.github/workflows/setup-node.yml
         - name: Run semantic-release
-          run: |
-              yarn global add semantic-release@17
-              semantic-release
+          run: npx semantic-release
           env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
