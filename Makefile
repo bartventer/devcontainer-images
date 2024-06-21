@@ -3,7 +3,7 @@
 .DEFAULT_GOAL := help
 
 # Variables
-IMAGE_NAME?=archlinux## The name of the image to build. Default: archlinux
+IMAGE_NAME?=base-archlinux## The name of the image to build. Default: archlinux
 TEST_SCRIPT?=test.sh## The name of the test script. Default: test.sh
 
 # Devcontainer command
