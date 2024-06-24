@@ -25,7 +25,7 @@ You can decide how often you want updates by referencing a [semantic version](ht
 
 - `ghcr.io/bartventer/devcontainer-images/base-archlinux:1`
 - `ghcr.io/bartventer/devcontainer-images/base-archlinux:1.0`
-- `ghcr.io/bartventer/devcontainer-images/base-archlinux:1.0.10`
+- `ghcr.io/bartventer/devcontainer-images/base-archlinux:1.0.11`
 - `ghcr.io/bartventer/devcontainer-images/base-archlinux:latest`
 
 
