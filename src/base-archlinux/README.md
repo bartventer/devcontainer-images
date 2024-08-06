@@ -23,9 +23,7 @@ Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
 You can decide how often you want updates by referencing a [semantic version](https://semver.org/) of each image. For example:
 
-- `ghcr.io/bartventer/devcontainer-images/base-archlinux:1`
-- `ghcr.io/bartventer/devcontainer-images/base-archlinux:1.0`
-- `ghcr.io/bartventer/devcontainer-images/base-archlinux:1.0.55`
+- `ghcr.io/bartventer/devcontainer-images/base-archlinux:20240806.release`
 - `ghcr.io/bartventer/devcontainer-images/base-archlinux:latest`
 
 
