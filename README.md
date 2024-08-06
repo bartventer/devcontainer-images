@@ -11,8 +11,8 @@ This repository contains a _collection_ of Docker images for development contain
 
 | Image                                                            | Description                                                                                             |
 | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| [archlinux](src/base-archlinux/README.md)                        | The `archlinux` image provides a base Arch Linux environment for development containers.                |
-| [dotfiles](src/dotfiles-archlinux/README.md)                     | The `dotfiles` image provides a base Arch Linux environment with dotfiles for development containers (I use this to speed up dotfiles setup). |
+| [base-archlinux](src/base-archlinux/README.md)                        | The `base-archlinux` image provides a base Arch Linux environment for development containers.                |
+| [dotfiles-archlinux](src/dotfiles-archlinux/README.md)                     | The `dotfiles-archlinux` image provides a base Arch Linux environment with dotfiles for development containers _(I use this to speed up dotfiles setup)_. |
 
 ## Contributing
 
