@@ -23,5 +23,11 @@
     "languages": [
         "Python",
         "Node.js"
+    ],
+    "features": [
+        {
+            "name": "See base-archlinux",
+            "documentation": "https://github.com/bartventer/devcontainer-images/blob/master/src/base-archlinux/README.md"
+        }
     ]
 }
