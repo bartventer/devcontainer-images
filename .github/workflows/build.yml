@@ -37,7 +37,7 @@ jobs:
         run: yarn global add @devcontainers/cli
 
       - name: Validate Metadata
-        run: make IMAGE_NAME=${{ matrix.image-name }} validate
+        run: make IMAGE_NAME=${{ matrix.image-name }} metadata/validate
 
       - name: Get Platforms for ${{ matrix.image-name }}
         id: platforms
