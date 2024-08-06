@@ -22,13 +22,8 @@ fi
 
 METADATA=$(jq -r '.' "src/${IMAGE_NAME}/metadata.json")
 
-# Get the current date in YYYYMMDD format
 DATE_TAG=$(date +%Y%m%d)
-
-# Use GITHUB_JOB environment variable if set, otherwise default to a timestamp
-BUILD_JOB_NUMBER="${GITHUB_JOB:-$(date +%s)}"
-
-# Create the new version tag
+BUILD_JOB_NUMBER="${GITHUB_RUN_ID:-$(date +%s)}"
 NEW_VERSION="${DATE_TAG}.${BUILD_JOB_NUMBER}"
 
 echo "(*) Running image build, tag and push for ${IMAGE_NAME} with version ${NEW_VERSION}"
@@ -42,10 +37,8 @@ if [ "${DRYRUN}" = "false" ]; then
         --platform "$(echo "${METADATA}" | jq -r '.platforms | join(",")')" \
         --push >"${BUILD_OUTPUT}"
 
-    # Generate updated readme
     ./scripts/generate-readme.sh "${IMAGE_NAME}"
 
-    # Create PR for the updated documentation
     ./scripts/create-pr.sh "${IMAGE_NAME}" "${NEW_VERSION}"
 
 else
