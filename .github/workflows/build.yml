@@ -21,6 +21,7 @@ jobs:
       packages: write
       pull-requests: write
     strategy:
+      max-parallel: 1
       fail-fast: false
       matrix:
         image-name: 
@@ -63,16 +64,19 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Import GPG key
+        id: import-gpg
         uses: crazy-max/ghaction-import-gpg@v6
         with:
             gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.GPG_PASSPHRASE }}
             git_user_signingkey: true
             git_commit_gpgsign: true
+            git_push_gpgsign: true
   
       - name: Build, Push and Release
         env:
           GH_ACTIONS_USERNAME: ${{ vars.GH_ACTIONS_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_KEY_ID: ${{ steps.import-gpg.outputs.keyid }}
         run: |
           scripts/build.sh ${{ matrix.image-name }}
