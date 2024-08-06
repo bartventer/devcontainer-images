@@ -1,6 +1,5 @@
 ARG VARIANT="latest"
-ARG DOTFILES_REPO="https://github.com/bartventer/dotfiles.git"
-FROM ghcr.io/bartventer/base-archlinux:${VARIANT}
+FROM ghcr.io/bartventer/devcontainer-images/base-archlinux:${VARIANT}
 
 LABEL org.opencontainers.image.title="Arch Linux-Based Dotfiles Image"
 LABEL org.opencontainers.image.source="https://github.com/bartventer/devcontainer-images"
@@ -8,6 +7,21 @@ LABEL org.opencontainers.image.description="Arch Linux container with dotfiles d
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.authors="Bart Venter <bartventer@outlook.com>"
 
-# Install dotfiles
-RUN git clone ${DOTFILES_REPO} /home/vscode/.dotfiles && \
-    /home/vscode/.dotfiles/install.sh
+RUN pacman -Syu --noconfirm coreutils
+
+ENV USERNAME=vscode
+ENV HOME_DIR=/home/${USERNAME}
+
+WORKDIR ${HOME_DIR}
+
+ARG DOTFILES_REPO="https://github.com/bartventer/dotfiles.git"
+ADD --keep-git-dir=true ${DOTFILES_REPO} dotfiles
+
+USER ${USERNAME}
+
+RUN git config --global --add safe.directory ${HOME_DIR}/dotfiles
+
+RUN cd dotfiles && \
+    ./install.sh
+
+USER root
