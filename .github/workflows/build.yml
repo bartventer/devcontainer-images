@@ -23,7 +23,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image-name: ['base-archlinux']
+        image-name: 
+          - 'base-archlinux'
+          - 'dotfiles-archlinux'
     outputs:
       platforms: ${{ steps.platforms.outputs.platforms }}
 
