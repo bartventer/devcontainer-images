@@ -51,6 +51,10 @@ validate: $(IMAGE_METADATA_PATH) $(CONFIG_SCHEMA) ## Validate the config file
 	@$(AJV_VALIDATE) $(AJV_VALIDATE_FLAGS) || (echo "❌ Error. Config file is invalid." && exit 1)
 	@echo "✅ OK. Config file is valid."
 
+.PHONY: devcontainer/upgrade
+devcontainer/upgrade: ## Upgrade the devcontainer lockfiles
+	./scripts/devcontainer-upgrade.sh
+
 .PHONY: help
 help: ## Display this help message.
 	@echo "Usage: make [TARGET]"
