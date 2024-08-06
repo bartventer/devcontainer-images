@@ -16,28 +16,22 @@ echo "Version: ${VERSION}"
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 trap 'git checkout $current_branch' EXIT
 
-# Set up git
 git config --global user.email "${GH_ACTIONS_USERNAME}@users.noreply.github.com"
 git config --global user.name "${GH_ACTIONS_USERNAME}"
 git config pull.rebase false
 
-# Create a new branch
 branch="automated-documentation-update-${GITHUB_RUN_ID}"
 git checkout -b "$branch"
 
-# Add changes to the branch
 git add src/"${IMAGE_NAME}"/README.md
 
-# Commit the changes
-git commit \
+git commit -S \
     -m "chore(docs/${IMAGE_NAME}): Automated documentation update to version ${VERSION} [skip ci]" \
     -m "This PR updates the README file for the ${IMAGE_NAME} image to version ${VERSION}." \
     -m "Co-authored-by: Bart Venter <bartventer@outlook.com>"
 
-# Push the changes
 git push origin "$branch"
 
-# Create a PR
 pr_url=$(
     gh pr create \
         --fill \
@@ -46,10 +40,8 @@ pr_url=$(
         --reviewer "${GITHUB_ACTOR}"
 )
 
-# Extract PR number from the PR URL
 pr_number=$(echo "$pr_url" | grep -o '[0-9]\+$')
 
-# Enable auto-merge for the PR
 gh pr merge "$pr_number" \
     --auto \
     --rebase \
