@@ -12,7 +12,7 @@
 | *Container OS* | OS: Linux, Distribution: Arch |
 | *Published image architecture(s)* | linux/amd64 |
 | *Languages* | Python, Node.js |
-| *Features* | None |
+| *Features* | [See base-archlinux](https://github.com/bartventer/devcontainer-images/blob/master/src/base-archlinux/README.md) |
 
 
 ## Using this image
@@ -23,7 +23,7 @@ Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
 We keep the image up to date with daily builds. The image is tagged with `latest` as well as the date of the build and the `GITHUB_RUN_ID`. For example:
 
-- `ghcr.io/bartventer/devcontainer-images/dotfiles-archlinux:20240806.10270190912`
+- `ghcr.io/bartventer/devcontainer-images/dotfiles-archlinux:20240806.10270311088`
 - `ghcr.io/bartventer/devcontainer-images/dotfiles-archlinux:latest`
 
 
