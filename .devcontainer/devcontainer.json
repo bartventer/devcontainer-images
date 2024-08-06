@@ -10,5 +10,8 @@
                 "github.vscode-github-actions"
             ]
         }
+    },
+    "remoteEnv": {
+        "PATH": "${remoteEnv:HOME}/.yarn/bin:${remoteEnv:PATH}"
     }
 }
