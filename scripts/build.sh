@@ -11,7 +11,6 @@ DRYRUN="${2:-false}"
 
 CR="${CR:-ghcr.io}"
 GITHUB_REPOSITORY="${GITHUB_REPOSITORY:-$(git config --get remote.origin.url | sed 's/.*://;s/.git$//')}"
-VERSION=$(./scripts/next-version.sh --version-file "src/${IMAGE_NAME}/VERSION")
 
 if [[ -z "${IMAGE_NAME}" ]]; then
     echo "(!) Image name not provided"
@@ -19,27 +18,27 @@ if [[ -z "${IMAGE_NAME}" ]]; then
 elif [[ ! -f "src/${IMAGE_NAME}/metadata.json" ]]; then
     echo "(!) Metadata file not found or empty: src/${IMAGE_NAME}/metadata.json"
     exit 1
-elif [[ ! "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    echo "(!) Invalid version provided: ${VERSION}"
-    exit 1
 fi
 
 METADATA=$(jq -r '.' "src/${IMAGE_NAME}/metadata.json")
-VERSION_MAJOR=$(echo "$VERSION" | cut -d. -f1)
-VERSION_MINOR=$(echo "$VERSION" | cut -d. -f2)
-VERSION_PATCH=$(echo "$VERSION" | cut -d. -f3)
 
-echo "(*) Running image build, tag and push for ${IMAGE_NAME} version ${VERSION}"
+# Get the current date in YYYYMMDD format
+DATE_TAG=$(date +%Y%m%d)
+
+# Use GITHUB_JOB environment variable if set, otherwise default to a timestamp
+BUILD_JOB_NUMBER="${GITHUB_JOB:-$(date +%s)}"
+
+# Create the new version tag
+NEW_VERSION="${DATE_TAG}.${BUILD_JOB_NUMBER}"
+
+echo "(*) Running image build, tag and push for ${IMAGE_NAME} with version ${NEW_VERSION}"
 BUILD_OUTPUT="src/${IMAGE_NAME}/build-output.json"
 if [ "${DRYRUN}" = "false" ]; then
     devcontainer build \
         --log-level debug \
         --workspace-folder "src/${IMAGE_NAME}" \
         --image-name "${CR}/${GITHUB_REPOSITORY}/${IMAGE_NAME}:latest" \
-        --image-name "${CR}/${GITHUB_REPOSITORY}/${IMAGE_NAME}:${VERSION}" \
-        --image-name "${CR}/${GITHUB_REPOSITORY}/${IMAGE_NAME}:${VERSION_MAJOR}" \
-        --image-name "${CR}/${GITHUB_REPOSITORY}/${IMAGE_NAME}:${VERSION_MAJOR}.${VERSION_MINOR}" \
-        --image-name "${CR}/${GITHUB_REPOSITORY}/${IMAGE_NAME}:${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" \
+        --image-name "${CR}/${GITHUB_REPOSITORY}/${IMAGE_NAME}:${NEW_VERSION}" \
         --platform "$(echo "${METADATA}" | jq -r '.platforms | join(",")')" \
         --push >"${BUILD_OUTPUT}"
 
@@ -47,7 +46,7 @@ if [ "${DRYRUN}" = "false" ]; then
     ./scripts/generate-readme.sh "${IMAGE_NAME}"
 
     # Create PR for the updated documentation
-    ./scripts/create-pr.sh "${IMAGE_NAME}"
+    ./scripts/create-pr.sh "${IMAGE_NAME}" "${NEW_VERSION}"
 
 else
     echo "(*) Dry run enabled. Skipping the build and push."
