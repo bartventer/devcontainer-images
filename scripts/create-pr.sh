@@ -18,6 +18,7 @@ trap 'git checkout $current_branch' EXIT
 
 git config --global user.email "${GH_ACTIONS_USERNAME}@users.noreply.github.com"
 git config --global user.name "${GH_ACTIONS_USERNAME}"
+git config --global commit.gpgSign true
 git config pull.rebase false
 
 branch="automated-documentation-update-${GITHUB_RUN_ID}"
