@@ -21,9 +21,9 @@ You can directly reference pre-built versions of `Dockerfile` by using the `imag
 
 Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
-You can decide how often you want updates by referencing a [semantic version](https://semver.org/) of each image. For example:
+We keep the image up to date with daily builds. The image is tagged with `latest` as well as the date of the build and the `GITHUB_RUN_ID`. For example:
 
-- `ghcr.io/bartventer/devcontainer-images/dotfiles-archlinux:20240806.release`
+- `ghcr.io/bartventer/devcontainer-images/dotfiles-archlinux:20240806.10270190912`
 - `ghcr.io/bartventer/devcontainer-images/dotfiles-archlinux:latest`
 
 
