@@ -36,7 +36,7 @@ up: ## Start the devcontainer
 	$(DEVCONTAINER_UP) $(DEVCONTAINER_UP_FLAGS)
 
 .PHONY: test
-test: ## Test the devcontainer
+test: up ## Test the devcontainer
 	@echo "Testing the devcontainer ($(IMAGE_NAME))..."
 	$(DEVCONTAINER_EXEC) $(DEVCONTAINER_EXEC_FLAGS) /bin/bash -c '\
 		set -e; \
