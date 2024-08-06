@@ -1,14 +1,16 @@
 #!/bin/bash
-# This script creates a PR for the automated documentation update.
-# The script expects the image name as an argument.
-# Usage: ./scripts/create-pr.sh <image-name>
-# Example: ./scripts/create-pr.sh archlinux
+# Creates a PR for automated documentation update.
+# Usage: ./scripts/create-pr.sh <image-name> <version>
+# Example: ./scripts/create-pr.sh archlinux 20231010.123456
 
 set -euo pipefail
 
 IMAGE_NAME=${1}
+VERSION=${2}
 
 echo "Creating a PR for the automated documentation update..."
+echo "Image name: ${IMAGE_NAME}"
+echo "Version: ${VERSION}"
 
 # Switch back to the current branch on exit
 current_branch=$(git rev-parse --abbrev-ref HEAD)
@@ -24,14 +26,12 @@ branch="automated-documentation-update-${GITHUB_RUN_ID}"
 git checkout -b "$branch"
 
 # Add changes to the branch
-git add \
-    src/"${IMAGE_NAME}"/README.md \
-    src/"${IMAGE_NAME}"/VERSION
+git add src/"${IMAGE_NAME}"/README.md
 
 # Commit the changes
 git commit \
-    -m "chore(docs/${IMAGE_NAME}): Automated documentation update [skip ci]" \
-    -m "This PR updates the README and version files for the image based on the latest changes." \
+    -m "chore(docs/${IMAGE_NAME}): Automated documentation update to version ${VERSION} [skip ci]" \
+    -m "This PR updates the README file for the ${IMAGE_NAME} image to version ${VERSION}." \
     -m "Co-authored-by: Bart Venter <bartventer@outlook.com>"
 
 # Push the changes
@@ -55,4 +55,4 @@ gh pr merge "$pr_number" \
     --rebase \
     --delete-branch
 
-echo "Done. Created a PR for the automated documentation update and enabled auto-merge."
+echo "Done. Created a PR (${pr_url}) for the automated documentation update and enabled auto-merge."
