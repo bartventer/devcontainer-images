@@ -71,7 +71,6 @@ jobs:
             passphrase: ${{ secrets.GPG_PASSPHRASE }}
             git_user_signingkey: true
             git_commit_gpgsign: true
-            git_push_gpgsign: true
   
       - name: Build, Push and Release
         env:
