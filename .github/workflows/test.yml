@@ -28,7 +28,6 @@ jobs:
     - name: Run tests for '${{ matrix.image-name }}'
       shell: bash
       run: |
-        make up IMAGE_NAME=${{ matrix.image-name }}
         make test IMAGE_NAME=${{ matrix.image-name }}
 
   semantic-release:
