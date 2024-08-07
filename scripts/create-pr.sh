@@ -28,7 +28,7 @@ git checkout -b "$branch"
 git add src/"${IMAGE_NAME}"/README.md
 
 git commit -S \
-    -m "chore(docs/${IMAGE_NAME}): Automated documentation update to version ${VERSION} [skip ci]" \
+    -m "chore(docs/${IMAGE_NAME}): Automated documentation update [skip ci]" \
     -m "This PR updates the README file for the ${IMAGE_NAME} image to version ${VERSION}." \
     -m "Co-authored-by: Bart Venter <bartventer@outlook.com>"
 
