@@ -10,6 +10,6 @@
     "@semantic-release/release-notes-generator": "^14.0.1",
     "ajv-cli": "^5.0.0",
     "ajv-formats": "^3.0.1",
-    "semantic-release": "24.0.0"
+    "semantic-release": "24.1.0"
   }
 }
