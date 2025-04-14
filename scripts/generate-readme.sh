@@ -1,46 +1,62 @@
 #!/usr/bin/env bash
-# This script generates a README.md file for the image based on the template.
-# The script expects the image name and version as arguments.
-# Usage: ./scripts/generate-readme.sh <image-name> <version>
-# Example: ./scripts/generate-readme.sh archlinux 1.0.0
 
-set -euxo pipefail
+# This script generates a README file for a specific image based on the metadata and build output.
 
-IMAGE_NAME=${1:-}
-BUILD_OUTPUT_FILE="src/${IMAGE_NAME}/build-output.json"
-METADATA_FILE="src/${IMAGE_NAME}/metadata.json"
+set -euo pipefail
 
-echo "🚀 Generating README for $IMAGE_NAME"
+usage() {
+	local message=$1 #Optional error message
+	if [[ -n "$message" ]]; then
+		echo "Error: $message"
+		echo
+	fi
+	echo "Usage: $0 <image-name>"
+	echo "Example: $0 archlinux"
+	echo "Note: use DRYRUN=true to preview the README content without writing to a file."
+}
 
-if [[ -z "$IMAGE_NAME" ]]; then
-    echo "Error: IMAGE_NAME argument is not provided."
-    exit 1
-elif [[ ! -f "$METADATA_FILE" ]]; then
-    echo "Error: Metadata file not found at $METADATA_FILE."
-    exit 1
-elif [[ ! -f "$BUILD_OUTPUT_FILE" ]]; then
-    echo "Error: Build output file not found at $BUILD_OUTPUT_FILE."
-    exit 1
-fi
+IMAGE_NAME=${1:?"$(usage "Image name is required.")"}
+DRYRUN=${DRYRUN:-false}
 
-# Generate markdown links for each contributor
-CONTRIBUTORS=$(jq -r '[.contributors[] | "[\(.name)](\(.link))"] | join(", ")' "$METADATA_FILE")
-CONTAINER_OS=$(jq -r 'if .containerOS.distribution then "OS: \(.containerOS.os), Distribution: \(.containerOS.distribution)" else .containerOS.os end' "$METADATA_FILE")
-IMAGE_NAMES=$(jq -r '.imageName | unique[] | "- `" + . + "`"' "$BUILD_OUTPUT_FILE" | tr '\n' '%')
-FEATURES=$(jq -r 'if .features | length > 0 then [.features[] | "[\(.name)](\(.documentation))"] | join(", ") else "None" end' "$METADATA_FILE")
+main() {
+	local build_output="src/${IMAGE_NAME}/build-output.json"
+	local metadata="src/${IMAGE_NAME}/metadata.json"
+	local readme_template="docs/README-template.md"
 
-awk -v name="$(jq -r '.name' "$METADATA_FILE")" \
-    -v imageName="${IMAGE_NAME}" \
-    -v contributors="${CONTRIBUTORS}" \
-    -v summary="$(jq -r '.summary' "$METADATA_FILE")" \
-    -v definitionType="$(jq -r '.definitionType' "$METADATA_FILE")" \
-    -v containerHostOSSupport="$(jq -r '.containerHostOSSupport | join(", ")' "$METADATA_FILE")" \
-    -v containerOS="${CONTAINER_OS}" \
-    -v publishedImageArchitecture="$(jq -r '.platforms | join(", ")' "$METADATA_FILE")" \
-    -v languages="$(jq -r '.languages | join(", ")' "$METADATA_FILE")" \
-    -v imageNames="${IMAGE_NAMES}" \
-    -v features="${FEATURES}" \
-    '{
+	echo "==============================================="
+	echo "📄 Generating README"
+	echo "(*) Image name: ${IMAGE_NAME}"
+	echo "(*) Dry run: ${DRYRUN}"
+	echo "==============================================="
+	if [[ ! -f "$readme_template" ]]; then
+		echo "Error: README template not found at $readme_template."
+		exit 1
+	elif [[ ! -f "$metadata" ]]; then
+		echo "Error: Metadata file not found at $metadata."
+		exit 1
+	elif [[ ! -f "$build_output" ]]; then
+		echo "Error: Build output file not found at $build_output."
+		exit 1
+	fi
+
+	local contributors container_os image_names features readme_content
+	contributors=$(jq -r '[.contributors[] | "[\(.name)](\(.link))"] | join(", ")' "$metadata")
+	container_os=$(jq -r 'if .containerOS.distribution then "OS: \(.containerOS.os), Distribution: \(.containerOS.distribution)" else .containerOS.os end' "$metadata")
+	image_names=$(jq -r '.imageName | unique[] | "- `" + . + "`"' "$build_output" | tr '\n' '%')
+	features=$(jq -r 'if .features | length > 0 then [.features[] | "[\(.name)](\(.documentation))"] | join(", ") else "None" end' "$metadata")
+
+	readme_content=$(awk -v name="$(jq -r '.name' "$metadata")" \
+		-v imageName="${IMAGE_NAME}" \
+		-v contributors="${contributors}" \
+		-v summary="$(jq -r '.summary' "$metadata")" \
+		-v definitionType="$(jq -r '.definitionType' "$metadata")" \
+		-v containerHostOSSupport="$(jq -r '.containerHostOSSupport | join(", ")' "$metadata")" \
+		-v containerOS="${container_os}" \
+		-v publishedImageArchitecture="$(jq -r '.platforms | join(", ")' "$metadata")" \
+		-v languages="$(jq -r '.languages | join(", ")' "$metadata")" \
+		-v imageNames="${image_names}" \
+		-v features="${features}" \
+		'{
         gsub("{{name}}", name);
         gsub("{{imageName}}", imageName);
         gsub("{{contributors}}", contributors);
@@ -54,6 +70,19 @@ awk -v name="$(jq -r '.name' "$METADATA_FILE")" \
         gsub("{{features}}", features);
         gsub("%", "\n");
         print;
-    }' docs/README-template.md >"src/${IMAGE_NAME}/README.md"
+    }' docs/README-template.md)
 
-echo "✔️ OK. README.md file is generated for $IMAGE_NAME."
+	if [[ "$DRYRUN" == "true" ]]; then
+		echo "✔️ OK. README.md content is generated for $IMAGE_NAME."
+		echo "(*) Previewing README content:"
+		echo "$readme_content"
+		echo
+	else
+		echo "✔️ OK. README.md content is generated for $IMAGE_NAME."
+		echo "$readme_content" >"src/${IMAGE_NAME}/README.md"
+		echo "(*) README.md file written to src/${IMAGE_NAME}/README.md."
+		echo
+	fi
+}
+
+main
