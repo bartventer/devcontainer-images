@@ -1,17 +1,17 @@
 {
-    "build": {
-        "dockerfile": "./Dockerfile",
-        "context": ".",
-        "args": {
-            "VARIANT": "latest"
-        }
-    },
-    "features": {
-        "ghcr.io/bartventer/arch-devcontainer-features/common-utils:latest": {
-            "configureZshAsDefaultShell": true,
-            "installOhMyZshConfig": false,
-            "additionalPackages": "nodejs npm yarn make jq yq"
-        }
-    },
-    "remoteUser": "vscode"
+  "build": {
+    "dockerfile": "./Dockerfile",
+    "context": ".",
+    "args": {
+      "VARIANT": "latest"
+    }
+  },
+  "features": {
+    "ghcr.io/bartventer/arch-devcontainer-features/common-utils:latest": {
+      "configureZshAsDefaultShell": true,
+      "installOhMyZshConfig": false,
+      "additionalPackages": "nodejs npm yarn make jq yq"
+    }
+  },
+  "remoteUser": "vscode"
 }
