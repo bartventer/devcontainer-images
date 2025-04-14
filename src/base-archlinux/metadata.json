@@ -1,33 +1,33 @@
 {
-    "name": "Arch Linux",
-    "summary": "Simple Arch Linux container with common tools installed.",
-    "contributors": [
-        {
-            "name": "Bart Venter",
-            "link": "https://github.com/bartvener"
-        }
-    ],
-    "definitionType": "Dockerfile",
-    "containerHostOSSupport": [
-        "Linux",
-        "macOS",
-        "Windows"
-    ],
-    "containerOS": {
-        "os": "Linux",
-        "distribution": "Arch"
-    },
-    "platforms": [
-        "linux/amd64"
-    ],
-    "languages": [
-        "Python",
-        "Node.js"
-    ],
-    "features": [
-        {
-            "name": "Common Utilities",
-            "documentation": "https://github.com/bartventer/arch-devcontainer-features/tree/main/src/common-utils/README.md"
-        }
-    ]
+  "name": "Arch Linux",
+  "summary": "Simple Arch Linux container with common tools installed.",
+  "contributors": [
+    {
+      "name": "Bart Venter",
+      "link": "https://github.com/bartventer"
+    }
+  ],
+  "definitionType": "Dockerfile",
+  "containerHostOSSupport": [
+    "Linux",
+    "macOS",
+    "Windows"
+  ],
+  "containerOS": {
+    "os": "Linux",
+    "distribution": "Arch"
+  },
+  "platforms": [
+    "linux/amd64"
+  ],
+  "languages": [
+    "Python",
+    "Node.js"
+  ],
+  "features": [
+    {
+      "name": "Common Utilities",
+      "documentation": "https://github.com/bartventer/arch-devcontainer-features/tree/main/src/common-utils/README.md"
+    }
+  ]
 }

@@ -1,33 +1,33 @@
 {
-    "name": "Dotfiles for Arch Linux",
-    "summary": "Dotfiles for Arch Linux container with common tools installed.",
-    "contributors": [
-        {
-            "name": "Bart Venter",
-            "link": "https://github.com/bartvener"
-        }
-    ],
-    "definitionType": "Dockerfile",
-    "containerHostOSSupport": [
-        "Linux",
-        "macOS",
-        "Windows"
-    ],
-    "containerOS": {
-        "os": "Linux",
-        "distribution": "Arch"
-    },
-    "platforms": [
-        "linux/amd64"
-    ],
-    "languages": [
-        "Python",
-        "Node.js"
-    ],
-    "features": [
-        {
-            "name": "See base-archlinux",
-            "documentation": "https://github.com/bartventer/devcontainer-images/blob/master/src/base-archlinux/README.md"
-        }
-    ]
+  "name": "Dotfiles for Arch Linux",
+  "summary": "Dotfiles for Arch Linux container with common tools installed.",
+  "contributors": [
+    {
+      "name": "Bart Venter",
+      "link": "https://github.com/bartventer"
+    }
+  ],
+  "definitionType": "Dockerfile",
+  "containerHostOSSupport": [
+    "Linux",
+    "macOS",
+    "Windows"
+  ],
+  "containerOS": {
+    "os": "Linux",
+    "distribution": "Arch"
+  },
+  "platforms": [
+    "linux/amd64"
+  ],
+  "languages": [
+    "Python",
+    "Node.js"
+  ],
+  "features": [
+    {
+      "name": "See base-archlinux",
+      "documentation": "https://github.com/bartventer/devcontainer-images/blob/master/src/base-archlinux/README.md"
+    }
+  ]
 }
