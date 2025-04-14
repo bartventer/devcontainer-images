@@ -16,6 +16,8 @@ jobs:
     if: ${{ contains(fromJSON('["workflow_dispatch", "schedule"]'), github.event_name) || github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}
     name: Build and Release
     runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: ${{ matrix.image-name }}
     permissions:
       contents: write
       packages: write
@@ -38,7 +40,7 @@ jobs:
         run: yarn global add @devcontainers/cli
 
       - name: Validate Metadata
-        run: make IMAGE_NAME=${{ matrix.image-name }} metadata/validate
+        run: make metadata/validate
 
       - name: Get Platforms for ${{ matrix.image-name }}
         id: platforms
@@ -77,4 +79,4 @@ jobs:
           GH_ACTIONS_USERNAME: ${{ vars.GH_ACTIONS_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPG_KEY_ID: ${{ steps.import-gpg.outputs.keyid }}
-        run: make IMAGE_NAME=${{ matrix.image-name }} devcontainer/build-push
+        run: make devcontainer/build-push
