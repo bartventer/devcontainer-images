@@ -41,6 +41,9 @@ branch="automated-documentation-update-${GITHUB_RUN_ID}"
 git checkout -b "$branch"
 
 git add src/"${IMAGE_NAME}"/README.md
+if [[ -f src/"${IMAGE_NAME}"/.devcontainer/devcontainer-lock.json ]]; then
+	git add src/"${IMAGE_NAME}"/.devcontainer/devcontainer-lock.json
+fi
 
 git commit -S \
 	-m "chore(docs/${IMAGE_NAME}): Automated documentation update to version ${VERSION} [skip ci]" \
