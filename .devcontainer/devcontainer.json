@@ -1,7 +1,7 @@
 {
     "image": "mcr.microsoft.com/devcontainers/javascript-node:0-18",
     "features": {
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+        "ghcr.io/devcontainers/features/docker-in-docker:latest": {}
     },
     "postCreateCommand": "yarn install && yarn install -g @devcontainers/cli",
     "customizations": {
