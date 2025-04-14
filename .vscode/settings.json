@@ -1,10 +1,10 @@
 {
-    "json.schemas": [
-        {
-            "fileMatch": [
-                "/src/**/metadata.json"
-            ],
-            "url": "./docs/schema.json"
-        }
-    ]
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "/src/**/metadata.json"
+      ],
+      "url": "./docs/metadata.schema.json"
+    }
+  ]
 }
