@@ -23,26 +23,30 @@ fi
 
 DRYRUN=${DRYRUN:-false}
 
-echo "==============================================="
-echo "🔄 Upgrading devcontainer lockfile..."
-echo "(*) Config file: $CONFIG"
-echo "(*) Dry run: $DRYRUN"
-echo "==============================================="
-
 echo "Checking for features in $CONFIG..."
-if jq -e '.features | type == "object" and length > 0' "$CONFIG" >/dev/null; then
-	echo "OK. Found features in $CONFIG, proceeding with upgrade"
-else
+features_count=$(jq -e '.features | objects | length' "$CONFIG" 2>/dev/null || echo "0")
+if ((features_count == 0)); then
 	echo "(!) No features found in $CONFIG. Skipping upgrade."
 	exit 0
 fi
 
+echo "==============================================="
+echo "🔄 Upgrading devcontainer lockfile..."
+echo "(*) Config file: $(realpath "$CONFIG")"
+echo "(*) Features count: $features_count"
+echo "(*) Dry run: $DRYRUN"
+echo "==============================================="
+
+[[ "$DRYRUN" == "false" ]] && echo "(*) Before: " && cat "$(dirname "$CONFIG")/devcontainer-lock.json"
+
 devcontainer upgrade \
 	--workspace-folder "$(dirname "$CONFIG")" \
-	--config "$CONFIG" --dry-run "$DRYRUN" || {
+	--config "$CONFIG" --log-level debug --dry-run "$DRYRUN" || {
 	echo "❌ Failed to upgrade lockfile for $CONFIG"
 	exit 1
 }
 
-echo "✅ Lockfile upgrade completed successfully."
+[[ "$DRYRUN" == "false" ]] && echo "(*) After: " && cat "$(dirname "$CONFIG")/devcontainer-lock.json"
+
 echo
+echo "✅ Lockfile upgrade completed successfully."
