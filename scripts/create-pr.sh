@@ -27,10 +27,6 @@ if [[ "${DRYRUN:-false}" == "true" ]]; then
 	exit 0
 fi
 
-# Switch back to the current branch on exit
-current_branch=$(git rev-parse --abbrev-ref HEAD)
-trap 'git checkout $current_branch' EXIT
-
 git config --global user.email "${GH_ACTIONS_USERNAME}@users.noreply.github.com"
 git config --global user.name "${GH_ACTIONS_USERNAME}"
 git config --global commit.gpgSign true
@@ -60,9 +56,7 @@ pr_url=$(
 		--reviewer "${GITHUB_ACTOR}"
 )
 
-pr_number=$(echo "$pr_url" | grep -o '[0-9]\+$')
-
-gh pr merge "$pr_number" \
+gh pr merge "$pr_url" \
 	--auto \
 	--rebase \
 	--delete-branch
