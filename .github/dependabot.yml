@@ -24,6 +24,7 @@ updates:
       - "/"
       - "/src/base-archlinux"
       - "/src/dotfiles-archlinux"
+      - "/src/go-archlinux"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
