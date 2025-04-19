@@ -8,7 +8,7 @@
 |----------|-------|
 | *Contributors* | {{contributors}} |
 | *Definition type* | {{definitionType}} |
-| *Published images* | [ghcr.io/bartventer/devcontainer-images/{{imageName}}](ghcr.io/bartventer/devcontainer-images/{{imageName}}) |
+| *Published images* | [ghcr.io/bartventer/devcontainer-images/{{imageName}}](https://github.com/bartventer/devcontainer-images/pkgs/container/devcontainer-images%2F{{imageName}}) |
 | *Container host OS support* | {{containerHostOSSupport}} |
 | *Container OS* | {{containerOS}} |
 | *Published image architecture(s)* | {{publishedImageArchitecture}} |
