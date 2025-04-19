@@ -36,9 +36,9 @@ git config pull.rebase false
 branch="automated-documentation-update-${GITHUB_RUN_ID}"
 git checkout -b "$branch"
 
-git add src/"${IMAGE_NAME}"/README.md
-if [[ -f src/"${IMAGE_NAME}"/.devcontainer/devcontainer-lock.json ]]; then
-	git add src/"${IMAGE_NAME}"/.devcontainer/devcontainer-lock.json
+git add "src/${IMAGE_NAME}/README.md"
+if [[ -f "src/${IMAGE_NAME}/.devcontainer/devcontainer-lock.json" ]]; then
+	git add "src/${IMAGE_NAME}/.devcontainer/devcontainer-lock.json"
 fi
 
 git commit -S \
