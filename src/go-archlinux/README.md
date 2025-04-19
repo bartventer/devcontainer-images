@@ -8,8 +8,7 @@
 |----------|-------|
 | *Contributors* | [Bart Venter](https://github.com/bartventer) |
 | *Definition type* | Dockerfile |
-| *Published images* | [ghcr.io/bartventer/devcontainer-images/go-archlinux](https://github.com/bartventer/devcontainer-images/pkgs/container/devcontainer-images
-2Fgo-archlinux) |
+| *Published images* | `ghcr.io/bartventer/devcontainer-images/go-archlinux` |
 | *Container host OS support* | Linux, macOS, Windows |
 | *Container OS* | OS: Linux, Distribution: Arch |
 | *Published image architecture(s)* | linux/amd64 |
@@ -27,7 +26,7 @@ Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
 We keep the image up to date with daily builds. The image is tagged with `latest` as well as the date of the build and the `GITHUB_RUN_ID`. For example:
 
-- `ghcr.io/bartventer/devcontainer-images/go-archlinux:20250419.14548697921`
+- `ghcr.io/bartventer/devcontainer-images/go-archlinux:20250419.14548785783`
 - `ghcr.io/bartventer/devcontainer-images/go-archlinux:latest`
 
 
