@@ -17,18 +17,31 @@ usage() {
 
 CONFIG=${1:?"$(usage "Path to devcontainer.json is required.")"}
 if [[ ! -f "$CONFIG" ]]; then
-	echo "Error: File '$CONFIG' does not exist."
+	echo "(!) Error: File '$CONFIG' does not exist."
 	exit 1
 fi
 
 DRYRUN=${DRYRUN:-false}
 
-echo "Checking for features in $CONFIG..."
+echo "(*) Checking for features in $CONFIG..."
 features_count=$(jq -e '.features | objects | length' "$CONFIG" 2>/dev/null || echo "0")
 if ((features_count == 0)); then
 	echo "(!) No features found in $CONFIG. Skipping upgrade."
 	exit 0
 fi
+
+preview_lockfile() {
+	local message="$1" lockfile
+	lockfile="$(dirname "$CONFIG")/devcontainer-lock.json"
+	if [[ -f "$lockfile" ]]; then
+		[[ -n "$message" ]] && echo "(*) $message"
+		echo "(!) Lockfile found: $lockfile"
+		echo "(!) Contents:"
+		cat "$lockfile"
+	else
+		echo "(*) No existing lockfile found."
+	fi
+}
 
 echo "==============================================="
 echo "🔄 Upgrading devcontainer lockfile..."
@@ -37,7 +50,7 @@ echo "(*) Features count: $features_count"
 echo "(*) Dry run: $DRYRUN"
 echo "==============================================="
 
-[[ "$DRYRUN" == "false" ]] && echo "(*) Before: " && cat "$(dirname "$CONFIG")/devcontainer-lock.json"
+[[ "$DRYRUN" == "false" ]] && preview_lockfile "Before upgrade"
 
 devcontainer upgrade \
 	--workspace-folder "$(dirname "$CONFIG")" \
@@ -46,7 +59,7 @@ devcontainer upgrade \
 	exit 1
 }
 
-[[ "$DRYRUN" == "false" ]] && echo "(*) After: " && cat "$(dirname "$CONFIG")/devcontainer-lock.json"
+[[ "$DRYRUN" == "false" ]] && preview_lockfile "After upgrade"
 
 echo
 echo "✅ Lockfile upgrade completed successfully."
