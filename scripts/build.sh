@@ -58,6 +58,7 @@ retry() {
 }
 
 if [[ "${DRYRUN}" == "false" ]]; then
+	# devcontainer cli build command is a bit flaky, so we retry it a few times
 	retry 3 10 \
 		devcontainer build \
 		--log-level debug \
