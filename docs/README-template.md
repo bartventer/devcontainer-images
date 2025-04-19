@@ -1,13 +1,14 @@
 # {{name}}
 
 ## Summary
+
 *{{summary}}*
 
 | Metadata | Value |
 |----------|-------|
 | *Contributors* | {{contributors}} |
 | *Definition type* | {{definitionType}} |
-| *Published images* | ghcr.io/bartventer/devcontainer-images/{{imageName}} |
+| *Published images* | [ghcr.io/bartventer/devcontainer-images/{{imageName}}](ghcr.io/bartventer/devcontainer-images/{{imageName}}) |
 | *Container host OS support* | {{containerHostOSSupport}} |
 | *Container OS* | {{containerOS}} |
 | *Published image architecture(s)* | {{publishedImageArchitecture}} |
@@ -16,8 +17,10 @@
 
 
 ## Using this image
+
 You can directly reference pre-built versions of `Dockerfile` by using the `image` property in `.devcontainer/devcontainer.json` or updating the `FROM` statement in your own  `Dockerfile` to one of the following. An example `Dockerfile` is included in this repository.
-- `ghcr.io/bartventer/devcontainer-images/{{imageName}}` _(latest)_
+
+- `ghcr.io/bartventer/devcontainer-images/{{imageName}}` *(latest)*
 
 Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
@@ -26,6 +29,7 @@ We keep the image up to date with daily builds. The image is tagged with `latest
 {{imageNames}}
 
 ## License
+
 Copyright (c) Bart Venter.
 Licensed under the MIT License. See [LICENSE](https://github.com/bartventer/devcontainer-images/blob/main/LICENSE).
 
