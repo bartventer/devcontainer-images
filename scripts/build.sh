@@ -37,8 +37,29 @@ echo "==============================================="
 
 METADATA=$(jq -r '.' "src/${IMAGE_NAME}/metadata.json")
 BUILD_OUTPUT="src/${IMAGE_NAME}/build-output.json"
+
+# retry function to handle command retries
+# Usage: retry <retries> <delay> <command>
+retry() {
+	local retries=$1 delay=$2
+	shift 2 # Shift to the command
+	local count=0
+	until "$@"; do
+		exit_code=$?
+		count=$((count + 1))
+		if ((count >= retries)); then
+			echo "(!) Command failed after $count attempts."
+			return $exit_code
+		fi
+		echo "(!) Command failed. Retrying in $delay seconds... ($count/$retries)"
+		sleep "$delay"
+	done
+	return 0
+}
+
 if [[ "${DRYRUN}" == "false" ]]; then
-	devcontainer build \
+	retry 3 10 \
+		devcontainer build \
 		--log-level debug \
 		--workspace-folder "src/${IMAGE_NAME}" \
 		--image-name "${CR}/${GITHUB_REPOSITORY}/${IMAGE_NAME}:latest" \
