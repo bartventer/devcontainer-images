@@ -1,0 +1,36 @@
+{
+  "name": "Go on Arch Linux",
+  "summary": "Development environment for Go on Arch Linux.",
+  "contributors": [
+    {
+      "name": "Bart Venter",
+      "link": "https://github.com/bartventer"
+    }
+  ],
+  "definitionType": "Dockerfile",
+  "containerHostOSSupport": [
+    "Linux",
+    "macOS",
+    "Windows"
+  ],
+  "containerOS": {
+    "os": "Linux",
+    "distribution": "Arch"
+  },
+  "platforms": [
+    "linux/amd64"
+  ],
+  "languages": [
+    "Go"
+  ],
+  "features": [
+    {
+      "name": "Go",
+      "documentation": "https://github.com/bartventer/arch-devcontainer-features/tree/main/src/go/README.md"
+    },
+    {
+      "name": "See base-archlinux",
+      "documentation": "https://github.com/bartventer/devcontainer-images/blob/master/src/base-archlinux/README.md"
+    }
+  ]
+}
