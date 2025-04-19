@@ -12,7 +12,7 @@ on:
       - completed
 
 jobs:
-  release:
+  build:
     if: ${{ contains(fromJSON('["workflow_dispatch", "schedule"]'), github.event_name) || github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}
     name: Build and Release
     runs-on: ubuntu-latest
