@@ -33,7 +33,7 @@ git config --global commit.gpgSign true
 git config --global user.signingkey "${GPG_KEY_ID}"
 git config pull.rebase false
 
-branch="automated-documentation-update-${GITHUB_RUN_ID}"
+branch="automated-documentation-update-${IMAGE_NAME}-${VERSION}-${GITHUB_RUN_ID}"
 git checkout -b "$branch"
 
 git add "src/${IMAGE_NAME}/README.md"
