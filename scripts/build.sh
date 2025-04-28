@@ -73,6 +73,7 @@ if [[ "${DRYRUN}" == "false" ]]; then
 		echo $?
 	) -ne 0 ]]; then
 		echo "(!) Invalid or empty build output: ${BUILD_OUTPUT}"
+		cat "${BUILD_OUTPUT}"
 		exit 1
 	fi
 else
