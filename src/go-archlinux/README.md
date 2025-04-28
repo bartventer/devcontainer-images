@@ -12,7 +12,7 @@
 | *Container host OS support* | Linux, macOS, Windows |
 | *Container OS* | OS: Linux, Distribution: Arch |
 | *Published image architecture(s)* | linux/amd64 |
-| *Languages* | Go |
+| *Languages* | Python, Node.js, Go |
 | *Features* | [Go](https://github.com/bartventer/arch-devcontainer-features/tree/main/src/go/README.md), [See base-archlinux](https://github.com/bartventer/devcontainer-images/blob/master/src/base-archlinux/README.md) |
 
 
@@ -26,7 +26,7 @@ Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
 We keep the image up to date with daily builds. The image is tagged with `latest` as well as the date of the build and the `GITHUB_RUN_ID`. For example:
 
-- `ghcr.io/bartventer/devcontainer-images/go-archlinux:20250428.14697455988`
+- `ghcr.io/bartventer/devcontainer-images/go-archlinux:20250428.14707983813`
 - `ghcr.io/bartventer/devcontainer-images/go-archlinux:latest`
 
 
