@@ -9,8 +9,7 @@
   "features": {
     "ghcr.io/bartventer/arch-devcontainer-features/common-utils:latest": {
       "configureZshAsDefaultShell": true,
-      "installOhMyZshConfig": false,
-      "additionalPackages": "nodejs npm yarn make jq yq"
+      "installOhMyZshConfig": false
     }
   },
   "remoteUser": "vscode"
