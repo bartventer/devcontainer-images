@@ -22,7 +22,7 @@ DATE_TAG := $(shell date +%Y%m%d)
 NEXT_VERSION := $(shell echo ${DATE_TAG}.${BUILD_JOB_NUMBER})
 
 # Devcontainer command
-DC=devcontainer
+DC=yarn devcontainer
 DC_FLAGS=--workspace-folder ./src/$(IMAGE_NAME)
 
 ## Testing:
