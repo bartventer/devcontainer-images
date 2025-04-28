@@ -24,27 +24,25 @@ NEXT_VERSION := $(shell echo ${DATE_TAG}.${BUILD_JOB_NUMBER})
 # Devcontainer command
 DC=yarn devcontainer
 DC_FLAGS=--workspace-folder ./src/$(IMAGE_NAME)
+DC_SCRIPTS_MOUNT=--mount "type=bind,source=$(shell pwd)/scripts/test-utils.sh,target=/usr/local/bin/test-utils.sh"
 
 ## Testing:
+.PHONY: devcontainer/up
+devcontainer/up: ## Start the devcontainer
+	$(DC) up $(DC_FLAGS) $(DC_SCRIPTS_MOUNT)
+
 .PHONY: devcontainer/test
-devcontainer/test: TEST_SCRIPT := test.sh
 devcontainer/test: devcontainer/up ## Test the devcontainer
 	$(DC) exec $(DC_FLAGS) /bin/bash -c '\
 		set -e; \
-		pwd; \
-		ls -la; \
 		cd ./test_project; \
-		chmod +x $(TEST_SCRIPT); \
-		./$(TEST_SCRIPT)'
+		chmod +x test.sh; \
+		./test.sh'
 
 ## Build:
 .PHONY: metadata/validate
 metadata/validate: ## Validate the metadata file
 	$(SCRIPTSDIR)/validate-metadata.sh $(IMAGE_NAME)
-
-.PHONY: devcontainer/up
-devcontainer/up: ## Start the devcontainer
-	$(DC) up $(DC_FLAGS)
 
 .PHONY: devcontainer/lock
 devcontainer/lock: ## Upgrade the devcontainer lock file. Arguments: DC_CONFIG.
