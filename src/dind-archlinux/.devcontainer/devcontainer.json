@@ -1,0 +1,13 @@
+{
+  "build": {
+      "dockerfile": "./Dockerfile",
+      "context": ".",
+      "args": {
+          "VARIANT": "latest"
+      }
+  },
+  "features": {
+    "ghcr.io/bartventer/arch-devcontainer-features/docker-in-docker:latest": {}
+  },
+  "remoteUser": "vscode"
+}
