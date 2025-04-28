@@ -62,6 +62,7 @@ if [[ "${DRYRUN}" == "false" ]]; then
 	retry 3 10 \
 		yarn -s devcontainer build \
 		--log-level debug \
+		--no-cache \
 		--workspace-folder "src/${IMAGE_NAME}" \
 		--image-name "${CR}/${GITHUB_REPOSITORY}/${IMAGE_NAME}:latest" \
 		--image-name "${CR}/${GITHUB_REPOSITORY}/${IMAGE_NAME}:${NEXT_VERSION}" \
