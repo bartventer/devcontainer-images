@@ -52,7 +52,7 @@ echo "==============================================="
 
 [[ "$DRYRUN" == "false" ]] && preview_lockfile "Before upgrade"
 
-devcontainer upgrade \
+yarn devcontainer upgrade \
 	--workspace-folder "$(dirname "$CONFIG")" \
 	--config "$CONFIG" --log-level debug --dry-run "$DRYRUN" || {
 	echo "❌ Failed to upgrade lockfile for $CONFIG"
