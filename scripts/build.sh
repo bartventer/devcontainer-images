@@ -60,7 +60,7 @@ retry() {
 if [[ "${DRYRUN}" == "false" ]]; then
 	# devcontainer cli build command is a bit flaky, so we retry it a few times
 	retry 3 10 \
-		devcontainer build \
+		yarn devcontainer build \
 		--log-level debug \
 		--workspace-folder "src/${IMAGE_NAME}" \
 		--image-name "${CR}/${GITHUB_REPOSITORY}/${IMAGE_NAME}:latest" \
