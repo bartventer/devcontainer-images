@@ -2,6 +2,7 @@
 cd "$(dirname "$0")" || exit
 
 # shellcheck disable=SC1091
+# shellcheck source=../../../scripts/test-utils.sh
 source test-utils.sh
 
 # Run common tests
