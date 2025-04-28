@@ -67,6 +67,14 @@ if [[ "${DRYRUN}" == "false" ]]; then
 		--image-name "${CR}/${GITHUB_REPOSITORY}/${IMAGE_NAME}:${NEXT_VERSION}" \
 		--platform "$(echo "${METADATA}" | jq -r '.platforms | join(",")')" \
 		--push >"${BUILD_OUTPUT}"
+
+	if [[ ! -s "${BUILD_OUTPUT}" || $(
+		jq empty "${BUILD_OUTPUT}" 2>/dev/null
+		echo $?
+	) -ne 0 ]]; then
+		echo "(!) Invalid or empty build output: ${BUILD_OUTPUT}"
+		exit 1
+	fi
 else
 	echo "(*) Dry run enabled. Skipping the build and push."
 fi
