@@ -36,7 +36,7 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: package.json
-
+      - run: yarn install
       - name: Validate Metadata
         run: make metadata/validate
 
@@ -77,6 +77,4 @@ jobs:
           GH_ACTIONS_USERNAME: ${{ vars.GH_ACTIONS_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPG_KEY_ID: ${{ steps.import-gpg.outputs.keyid }}
-        run: |
-          yarn install
-          make devcontainer/build-push
+        run: make devcontainer/build-push
