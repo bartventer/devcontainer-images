@@ -52,9 +52,18 @@ echo "==============================================="
 
 [[ "$DRYRUN" == "false" ]] && preview_lockfile "Before upgrade"
 
+lockfile="$(dirname "$CONFIG")/devcontainer-lock.json"
+if [[ -f "$lockfile" ]]; then
+	echo "(*) Removing existing lockfile: $lockfile"
+	rm -f "$lockfile" || {
+		echo "❌ Failed to remove existing lockfile."
+		exit 1
+	}
+fi
+
 yarn devcontainer upgrade \
 	--workspace-folder "$(dirname "$CONFIG")" \
-	--config "$CONFIG" --log-level debug --dry-run "$DRYRUN" || {
+	--config "$CONFIG" --log-level debug  || {
 	echo "❌ Failed to upgrade lockfile for $CONFIG"
 	exit 1
 }
