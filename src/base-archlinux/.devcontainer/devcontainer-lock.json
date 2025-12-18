@@ -1,9 +1,9 @@
 {
   "features": {
     "ghcr.io/bartventer/arch-devcontainer-features/common-utils": {
-      "version": "1.4.67",
-      "resolved": "ghcr.io/bartventer/arch-devcontainer-features/common-utils@sha256:248cd194d7343594827baca4d707952bfe9ba9c22c293d17960b2b325e4cec41",
-      "integrity": "sha256:248cd194d7343594827baca4d707952bfe9ba9c22c293d17960b2b325e4cec41"
+      "version": "1.4.68",
+      "resolved": "ghcr.io/bartventer/arch-devcontainer-features/common-utils@sha256:6c534b140ed1ecff5d0868dc36f5c6268eeb9bae648e730f7935d9f70fff55b5",
+      "integrity": "sha256:6c534b140ed1ecff5d0868dc36f5c6268eeb9bae648e730f7935d9f70fff55b5"
     }
   }
 }
