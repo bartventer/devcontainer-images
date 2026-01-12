@@ -3,7 +3,7 @@
     "node": "23.9.0"
   },
   "dependencies": {
-    "@devcontainers/cli": "^0.76.0",
+    "@devcontainers/cli": "^0.81.0",
     "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/github": "^10.0.6",
