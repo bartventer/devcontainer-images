@@ -1,9 +1,9 @@
 {
   "features": {
     "ghcr.io/bartventer/arch-devcontainer-features/go": {
-      "version": "1.7.25",
-      "resolved": "ghcr.io/bartventer/arch-devcontainer-features/go@sha256:ffe8147de589927457df187271503504b3f8fe1eb28a5f04c927b9f06afffebc",
-      "integrity": "sha256:ffe8147de589927457df187271503504b3f8fe1eb28a5f04c927b9f06afffebc"
+      "version": "1.7.26",
+      "resolved": "ghcr.io/bartventer/arch-devcontainer-features/go@sha256:8689c3cff611a2a2308269622e4f4242a0294cebfc29865274c6d9bcb7959f1b",
+      "integrity": "sha256:8689c3cff611a2a2308269622e4f4242a0294cebfc29865274c6d9bcb7959f1b"
     }
   }
 }
