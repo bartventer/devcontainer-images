@@ -26,7 +26,7 @@ Refer to [this guide](https://containers.dev/guide/dockerfile) for more details.
 
 We keep the image up to date with daily builds. The image is tagged with `latest` as well as the date of the build and the `GITHUB_RUN_ID`. For example:
 
-- `ghcr.io/bartventer/devcontainer-images/dind-archlinux:20260627.28272832703`
+- `ghcr.io/bartventer/devcontainer-images/dind-archlinux:20260628.28306343436`
 - `ghcr.io/bartventer/devcontainer-images/dind-archlinux:latest`
 
 
