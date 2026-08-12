@@ -11,6 +11,6 @@
     "ajv-cli": "^5.0.0",
     "ajv-formats": "^3.0.1",
     "semantic-release": "24.0.0",
-    "semver": "^7.6.2"
+    "semver": "^7.7.3"
   }
 }
