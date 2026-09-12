@@ -1,9 +1,9 @@
 {
   "features": {
     "ghcr.io/bartventer/arch-devcontainer-features/docker-in-docker": {
-      "version": "1.3.38",
-      "resolved": "ghcr.io/bartventer/arch-devcontainer-features/docker-in-docker@sha256:b70f23bab0b7c7a902e8189d35786893bcc405daf9f479a072e7125a8fd3ab7a",
-      "integrity": "sha256:b70f23bab0b7c7a902e8189d35786893bcc405daf9f479a072e7125a8fd3ab7a"
+      "version": "1.3.39",
+      "resolved": "ghcr.io/bartventer/arch-devcontainer-features/docker-in-docker@sha256:ac9473ba82c191a785639bc26e5d93e98c393fa0278a4c606a5dc2888d5dc313",
+      "integrity": "sha256:ac9473ba82c191a785639bc26e5d93e98c393fa0278a4c606a5dc2888d5dc313"
     }
   }
 }
